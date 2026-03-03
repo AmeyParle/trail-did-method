@@ -79,7 +79,7 @@ Key sections:
 
 The `methods/trail.json` file in this repository is submitted for inclusion in the [W3C DID Specification Registries](https://github.com/w3c/did-spec-registries).
 
-**Status:** Submission pending (PR to be opened at https://github.com/w3c/did-spec-registries)
+**Status:** Submitted — [PR #669 on w3c/did-extensions](https://github.com/w3c/did-extensions/pull/669)
 
 ---
 
@@ -108,8 +108,8 @@ The `methods/trail.json` file in this repository is submitted for inclusion in t
 
 ## Roadmap
 
-- [ ] v0.1 — Specification draft (this repository) ← **YOU ARE HERE**
-- [ ] v0.1 — W3C DID Registry submission (`trail.json` PR)
+- [x] v0.1 — Specification draft (this repository) ✅
+- [x] v0.1 — W3C DID Registry submission ([PR #669](https://github.com/w3c/did-extensions/pull/669)) ✅
 - [ ] v0.2 — Reference resolver implementation (Node.js/TypeScript)
 - [ ] v0.3 — CLI tooling (`trail did create`, `trail did resolve`)
 - [ ] v0.5 — TRAIL Registry alpha (Early Adopter Program)
@@ -135,7 +135,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 **Christian Hommrich**
 TRAIL Protocol Initiative
-[https://trailprotocol.org](https://trailprotocol.org) *(coming soon)*
+[https://trailprotocol.org](https://trailprotocol.org)
 
 ---
 
