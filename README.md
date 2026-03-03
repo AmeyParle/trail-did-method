@@ -135,7 +135,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 **Christian Hommrich**
 TRAIL Protocol Initiative
-[https://trail-protocol.org](https://trail-protocol.org) *(coming soon)*
+[https://trailprotocol.org](https://trailprotocol.org) *(coming soon)*
 
 ---
 

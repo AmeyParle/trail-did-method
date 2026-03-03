@@ -1,7 +1,7 @@
 {
   "@context": [
     "https://www.w3.org/ns/did/v1",
-    "https://trail-protocol.org/ns/did/v1"
+    "https://trailprotocol.org/ns/did/v1"
   ],
   "id": "did:trail:agent:example-gmbh-de-support-bot-v2",
   "controller": "did:trail:org:example-gmbh-de",
@@ -27,7 +27,7 @@
     {
       "id": "did:trail:agent:example-gmbh-de-support-bot-v2#trail-registry",
       "type": "TrailRegistryService",
-      "serviceEndpoint": "https://registry.trail-protocol.org/1.0/identifiers/did:trail:agent:example-gmbh-de-support-bot-v2"
+      "serviceEndpoint": "https://registry.trailprotocol.org/1.0/identifiers/did:trail:agent:example-gmbh-de-support-bot-v2"
     }
   ]
 }

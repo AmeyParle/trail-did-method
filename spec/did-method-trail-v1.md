@@ -109,7 +109,7 @@ The `did:trail` method uses the **TRAIL Registry** as its Verifiable Data Regist
 1. Stores DID Document metadata and resolution endpoints
 2. Issues and manages TRAIL Verifiable Credentials (VCs) attesting to AI system identity
 3. Manages revocation status via a TRAIL Status List compatible with [W3C VC Status List 2021](https://www.w3.org/TR/vc-status-list/)
-4. Provides a public resolution API at `https://registry.trail-protocol.org/1.0/identifiers/`
+4. Provides a public resolution API at `https://registry.trailprotocol.org/1.0/identifiers/`
 
 **Self-Signed Mode:** Before the TRAIL Registry reaches production, DIDs MAY be created in **self-signed mode** (see §7.2). Self-signed `did:trail` DIDs are verifiable without an external registry and serve early adopters before the trust network reaches critical mass.
 
@@ -183,7 +183,7 @@ A `did:trail` DID Document MUST conform to the W3C DID Core 1.0 DID Document dat
 {
   "@context": [
     "https://www.w3.org/ns/did/v1",
-    "https://trail-protocol.org/ns/did/v1"
+    "https://trailprotocol.org/ns/did/v1"
   ],
   "id": "did:trail:org:acme-corp-eu",
   "verificationMethod": [
@@ -208,7 +208,7 @@ A `did:trail` DID Document MUST conform to the W3C DID Core 1.0 DID Document dat
     {
       "id": "did:trail:org:acme-corp-eu#trail-registry",
       "type": "TrailRegistryService",
-      "serviceEndpoint": "https://registry.trail-protocol.org/1.0/identifiers/did:trail:org:acme-corp-eu"
+      "serviceEndpoint": "https://registry.trailprotocol.org/1.0/identifiers/did:trail:org:acme-corp-eu"
     },
     {
       "id": "did:trail:org:acme-corp-eu#ai-policy",
@@ -221,7 +221,7 @@ A `did:trail` DID Document MUST conform to the W3C DID Core 1.0 DID Document dat
 
 ### 5.2 TRAIL-Specific Context Terms
 
-The `https://trail-protocol.org/ns/did/v1` JSON-LD context defines the following additional terms:
+The `https://trailprotocol.org/ns/did/v1` JSON-LD context defines the following additional terms:
 
 | Term | Type | Description |
 |------|------|-------------|
@@ -240,7 +240,7 @@ The `https://trail-protocol.org/ns/did/v1` JSON-LD context defines the following
   "@context": [
     "https://www.w3.org/ns/did/v1",
     "https://w3id.org/security/suites/jws-2020/v1",
-    "https://trail-protocol.org/ns/did/v1"
+    "https://trailprotocol.org/ns/did/v1"
   ],
   "id": "did:trail:agent:acme-corp-eu-rfq-assistant-v1",
   "controller": "did:trail:org:acme-corp-eu",
@@ -262,7 +262,7 @@ The `https://trail-protocol.org/ns/did/v1` JSON-LD context defines the following
     {
       "id": "did:trail:agent:acme-corp-eu-rfq-assistant-v1#trail-registry",
       "type": "TrailRegistryService",
-      "serviceEndpoint": "https://registry.trail-protocol.org/1.0/identifiers/did:trail:agent:acme-corp-eu-rfq-assistant-v1"
+      "serviceEndpoint": "https://registry.trailprotocol.org/1.0/identifiers/did:trail:agent:acme-corp-eu-rfq-assistant-v1"
     }
   ],
   "trail:aiSystemType": "agent",
@@ -285,7 +285,7 @@ To create a `did:trail` DID, a registrant MUST:
 1. Possess a valid Ed25519 key pair (the **TRAIL Identity Key**)
 2. For `org` mode: provide proof of legal entity (business registration document or eIDAS-compatible identity)
 3. For `agent` mode: hold an active `org` mode DID for the parent organization
-4. Accept the [TRAIL Participant Agreement](https://trail-protocol.org/legal/participant-agreement)
+4. Accept the [TRAIL Participant Agreement](https://trailprotocol.org/legal/participant-agreement)
 
 #### 6.1.2 Creation Steps
 
@@ -316,7 +316,7 @@ Construct the DID Document as specified in §5, including:
 Submit the DID Document to the TRAIL Registry via HTTP POST:
 
 ```http
-POST https://registry.trail-protocol.org/1.0/register
+POST https://registry.trailprotocol.org/1.0/register
 Content-Type: application/json
 Authorization: Bearer {TRAIL-API-KEY}
 
@@ -371,7 +371,7 @@ A `did:trail` DID resolver MUST perform the following steps:
 **HTTP Resolution (org/agent mode):**
 
 ```http
-GET https://registry.trail-protocol.org/1.0/identifiers/did:trail:org:acme-corp-eu
+GET https://registry.trailprotocol.org/1.0/identifiers/did:trail:org:acme-corp-eu
 Accept: application/did+ld+json
 ```
 
@@ -402,7 +402,7 @@ function resolveTrailSelf(did) {
   const subject = did.split('did:trail:self:')[1];
   const publicKeyBytes = multibase.decode(subject);
   return {
-    "@context": ["https://www.w3.org/ns/did/v1", "https://trail-protocol.org/ns/did/v1"],
+    "@context": ["https://www.w3.org/ns/did/v1", "https://trailprotocol.org/ns/did/v1"],
     "id": did,
     "verificationMethod": [{
       "id": `${did}#key-1`,
@@ -434,7 +434,7 @@ function resolveTrailSelf(did) {
 DID Document updates require a signed update request from the DID controller:
 
 ```http
-PUT https://registry.trail-protocol.org/1.0/identifiers/did:trail:org:acme-corp-eu
+PUT https://registry.trailprotocol.org/1.0/identifiers/did:trail:org:acme-corp-eu
 Content-Type: application/json
 Authorization: Bearer {TRAIL-API-KEY}
 
@@ -462,7 +462,7 @@ A DID MAY be deactivated either by the DID controller (voluntary) or by the TRAI
 #### 6.4.1 Controller-Initiated Deactivation
 
 ```http
-DELETE https://registry.trail-protocol.org/1.0/identifiers/did:trail:org:acme-corp-eu
+DELETE https://registry.trailprotocol.org/1.0/identifiers/did:trail:org:acme-corp-eu
 Authorization: Bearer {TRAIL-API-KEY}
 X-Trail-Proof: {signed-deactivation-proof}
 ```
@@ -475,7 +475,7 @@ The TRAIL Registry MAY revoke a DID under the following conditions:
 - Court order or regulatory requirement
 - Sustained pattern of harmful AI behavior (as defined in the TRAIL Conduct Standards)
 
-Revocation follows the TRAIL Revocation Policy (see [trail-protocol.org/legal/revocation-policy](https://trail-protocol.org/legal/revocation-policy)):
+Revocation follows the TRAIL Revocation Policy (see [trailprotocol.org/legal/revocation-policy](https://trailprotocol.org/legal/revocation-policy)):
 1. **Notice:** 14-day written notice before revocation (except in cases of immediate harm)
 2. **Appeal:** 30-day appeal window via the TRAIL Dispute Resolution Process
 3. **Effect:** Upon revocation, the DID Document is marked `"deactivated": true` and all associated VCs become invalid
@@ -507,7 +507,7 @@ The TRAIL Registry issues Verifiable Credentials (conforming to VC Data Model 2.
 {
   "@context": [
     "https://www.w3.org/2018/credentials/v1",
-    "https://trail-protocol.org/ns/credentials/v1"
+    "https://trailprotocol.org/ns/credentials/v1"
   ],
   "type": ["VerifiableCredential", "TrailIdentityCredential"],
   "issuer": "did:trail:org:trail-protocol",
@@ -521,11 +521,11 @@ The TRAIL Registry issues Verifiable Credentials (conforming to VC Data Model 2.
     "certificationLevel": "standard"
   },
   "credentialStatus": {
-    "id": "https://registry.trail-protocol.org/1.0/status/2026-03#42",
+    "id": "https://registry.trailprotocol.org/1.0/status/2026-03#42",
     "type": "StatusList2021Entry",
     "statusPurpose": "revocation",
     "statusListIndex": "42",
-    "statusListCredential": "https://registry.trail-protocol.org/1.0/status/2026-03"
+    "statusListCredential": "https://registry.trailprotocol.org/1.0/status/2026-03"
   }
 }
 ```
@@ -553,7 +553,7 @@ The TRAIL Trust Score (0.0–1.0) is computed across 5 dimensions:
 | 4 | **Behavioral Consistency** | 20% | AI output vs. declared policy alignment |
 | 5 | **Third-Party Attestations** | 10% | Attestations from other TRAIL participants |
 
-Trust Score computation is performed by the TRAIL Registry using a weighted formula documented in the [TRAIL Trust Score Specification v1.0](https://trail-protocol.org/specs/trust-score-v1).
+Trust Score computation is performed by the TRAIL Registry using a weighted formula documented in the [TRAIL Trust Score Specification v1.0](https://trailprotocol.org/specs/trust-score-v1).
 
 ---
 
@@ -608,7 +608,7 @@ Verifiers MUST check credential revocation status at verification time. Cached r
 
 ### 9.2 Public vs. Private Attributes
 
-The AI Policy document (`TrailAIPolicyService` endpoint) SHOULD follow the [TRAIL Selective Disclosure Profile](https://trail-protocol.org/specs/selective-disclosure-v1), which defines:
+The AI Policy document (`TrailAIPolicyService` endpoint) SHOULD follow the [TRAIL Selective Disclosure Profile](https://trailprotocol.org/specs/selective-disclosure-v1), which defines:
 - **Public attributes** (always disclosed): DID, legal name, jurisdiction, EU AI Act risk class, certification status
 - **Restricted attributes** (disclosed on demand with consent): trust score details, complaint history
 - **Private attributes** (never disclosed via protocol): training data, system prompts, cost structure
@@ -647,7 +647,7 @@ A reference resolver for `did:trail` is available at:
 const { TrailResolver } = require('@trailprotocol/resolver');
 
 const resolver = new TrailResolver({
-  registryEndpoint: 'https://registry.trail-protocol.org/1.0',
+  registryEndpoint: 'https://registry.trailprotocol.org/1.0',
   // For self-signed mode, no API key required:
   selfSignedMode: true
 });
@@ -684,7 +684,7 @@ did-trail:
   ports:
     - "8080:8080"
   environment:
-    - TRAIL_REGISTRY_ENDPOINT=https://registry.trail-protocol.org/1.0
+    - TRAIL_REGISTRY_ENDPOINT=https://registry.trailprotocol.org/1.0
 ```
 
 ---
@@ -697,11 +697,11 @@ The following JSON file is submitted for inclusion in the [W3C DID Specification
 {
   "name": "trail",
   "status": "provisional",
-  "verifiableDataRegistry": "TRAIL Registry (https://registry.trail-protocol.org)",
-  "specification": "https://trail-protocol.org/specs/did-method-v1",
+  "verifiableDataRegistry": "TRAIL Registry (https://registry.trailprotocol.org)",
+  "specification": "https://trailprotocol.org/specs/did-method-v1",
   "contactName": "Christian Hommrich",
   "contactEmail": "christian.hommrich@gmail.com",
-  "contactWebsite": "https://trail-protocol.org"
+  "contactWebsite": "https://trailprotocol.org"
 }
 ```
 
@@ -713,7 +713,7 @@ The following JSON file is submitted for inclusion in the [W3C DID Specification
 
 ```json
 {
-  "@context": ["https://www.w3.org/ns/did/v1", "https://trail-protocol.org/ns/did/v1"],
+  "@context": ["https://www.w3.org/ns/did/v1", "https://trailprotocol.org/ns/did/v1"],
   "id": "did:trail:org:example-gmbh-de",
   "verificationMethod": [{
     "id": "did:trail:org:example-gmbh-de#key-1",
@@ -733,7 +733,7 @@ The following JSON file is submitted for inclusion in the [W3C DID Specification
 
 ```json
 {
-  "@context": ["https://www.w3.org/ns/did/v1", "https://trail-protocol.org/ns/did/v1"],
+  "@context": ["https://www.w3.org/ns/did/v1", "https://trailprotocol.org/ns/did/v1"],
   "id": "did:trail:agent:example-gmbh-de-support-bot-v2",
   "controller": "did:trail:org:example-gmbh-de",
   "trail:aiSystemType": "agent",
@@ -753,7 +753,7 @@ The following JSON file is submitted for inclusion in the [W3C DID Specification
   "service": [{
     "id": "did:trail:agent:example-gmbh-de-support-bot-v2#trail-registry",
     "type": "TrailRegistryService",
-    "serviceEndpoint": "https://registry.trail-protocol.org/1.0/identifiers/did:trail:agent:example-gmbh-de-support-bot-v2"
+    "serviceEndpoint": "https://registry.trailprotocol.org/1.0/identifiers/did:trail:agent:example-gmbh-de-support-bot-v2"
   }]
 }
 ```
@@ -762,7 +762,7 @@ The following JSON file is submitted for inclusion in the [W3C DID Specification
 
 ```json
 {
-  "@context": ["https://www.w3.org/ns/did/v1", "https://trail-protocol.org/ns/did/v1"],
+  "@context": ["https://www.w3.org/ns/did/v1", "https://trailprotocol.org/ns/did/v1"],
   "id": "did:trail:self:z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK",
   "trail:trailMode": "self-signed",
   "verificationMethod": [{
@@ -798,9 +798,9 @@ The following JSON file is submitted for inclusion in the [W3C DID Specification
 - [EIDAS-2] European Parliament. *Regulation (EU) 2024/1183 (eIDAS 2.0)*. https://eur-lex.europa.eu/eli/reg/2024/1183/oj
 - [EIP-6551] Ethereum. *Token Bound Accounts*. https://eips.ethereum.org/EIPS/eip-6551
 - [OID4VC] OpenID Foundation. *OpenID for Verifiable Credentials*. https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html
-- [TRAIL-WHITEPAPER] Hommrich, C. *TRAIL Protocol Whitepaper v1.0*. 2026. https://trail-protocol.org/whitepaper
-- [TRAIL-BLUEPRINT-1] Hommrich, C. *TRAIL Protocol Blueprint Part 1*. 2026. https://trail-protocol.org/blueprint/part1
-- [TRAIL-BLUEPRINT-2] Hommrich, C. *TRAIL Protocol Blueprint Part 2*. 2026. https://trail-protocol.org/blueprint/part2
+- [TRAIL-WHITEPAPER] Hommrich, C. *TRAIL Protocol Whitepaper v1.0*. 2026. https://trailprotocol.org/whitepaper
+- [TRAIL-BLUEPRINT-1] Hommrich, C. *TRAIL Protocol Blueprint Part 1*. 2026. https://trailprotocol.org/blueprint/part1
+- [TRAIL-BLUEPRINT-2] Hommrich, C. *TRAIL Protocol Blueprint Part 2*. 2026. https://trailprotocol.org/blueprint/part2
 
 ---
 
