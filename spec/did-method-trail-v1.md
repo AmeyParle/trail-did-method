@@ -64,6 +64,7 @@ This document is a **Draft** specification submitted for registration in the [W3
    - 8.8 [Key Rotation Protocol](#88-key-rotation-protocol)
    - 8.9 [Specification Versioning](#89-specification-versioning)
    - 8.10 [Revocation Roadmap](#810-revocation-roadmap)
+   - 8.11 [Protocol Roadmap](#811-protocol-roadmap)
 9. [Privacy Considerations](#9-privacy-considerations)
 10. [Reference Implementation](#10-reference-implementation)
 11. [Governance](#11-governance)
@@ -1255,6 +1256,29 @@ The TRAIL Protocol will implement credential revocation using the [W3C Status Li
 
 Until the registry is operational, self-mode credentials (Tier 0) have no revocation mechanism — they are valid as long as the underlying key material is under the controller's authority.
 
+### 8.11 Protocol Roadmap
+
+The following items are planned for future specification versions. They are documented here to ensure continuity and enable community feedback.
+
+**v1.2.0 (planned)**
+| Item | Description | Dependency |
+|------|-------------|------------|
+| Credential Revocation | W3C StatusList2021 bitstring-based revocation | Registry operational |
+| Universal Resolver Driver | `did:trail` driver for DIF Universal Resolver | Registry operational |
+| JSON-LD Context Deployment | Host `https://trailprotocol.org/ns/did/v1` as resolvable context | trailprotocol.org |
+| npm Publish | Publish `@trailprotocol/core` to npmjs.com | CI/CD pipeline |
+| CI/CD Pipeline | GitHub Actions: build, test, lint on every PR | — |
+
+**v2.0.0 (planned)**
+| Item | Description | Dependency |
+|------|-------------|------------|
+| Registry Server | HTTP API for Tier 1/2 DID Registration + Resolution | PostgreSQL backend |
+| Trust Score Engine | 5-dimension computation (D1-D5) with per-dimension breakdown | Registry operational |
+| Multiple Reference Implementations | Python and Go SDKs for interoperability proof | v1.2.0 stable |
+| W3C DID Test Suite Compliance | Pass DIF interoperability test suite | Multiple implementations |
+| Post-Quantum Migration | Add post-quantum cryptosuite via Crypto Agility framework | NIST PQC standards finalized |
+| Intermediate CA Onboarding | Partner Registry Operator program | Governance framework v2 |
+
 ---
 
 ## 9. Privacy Considerations
@@ -1634,6 +1658,7 @@ This release addresses 9 critical improvements identified during community revie
 | 11 | **Added Key Rotation Protocol** — New §8.8 specifying key rotation mechanics for org/agent DIDs. Previous keys are retained for historical verification. Self-mode DIDs cannot rotate (key = identifier). | §8.8 (new) |
 | 12 | **Added Specification Versioning** — New §8.9. DID Documents now include `trail:specVersion` for backwards-compatible evolution. Follows Semantic Versioning 2.0.0. | §8.9 (new) |
 | 13 | **Added Revocation Roadmap** — New §8.10 defining the planned W3C Status List 2021 integration for credential revocation. | §8.10 (new) |
+| 14 | **Added Protocol Roadmap** — New §8.11 documenting planned features for v1.2.0 and v2.0.0 including Universal Resolver driver, npm publish, Trust Score Engine, and post-quantum migration. | §8.11 (new) |
 
 ### v1.0.0-draft (2026-03-01)
 
