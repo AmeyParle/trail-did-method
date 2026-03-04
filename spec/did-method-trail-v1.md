@@ -112,7 +112,23 @@ The `did:trail` method is designed to:
 | `did:key` | Ephemeral/self-sovereign keys | did:key can be used for self-signed mode (see §7.2) |
 | `did:ethr` | Ethereum-based registry | did:trail can anchor trust records on Ethereum via EIP-6551 |
 | `did:ion` | Bitcoin-anchored identity | Future integration path for immutable anchoring |
+| `did:ebsi` | EU-regulated identity (EBSI) | did:trail complements EBSI by adding AI-agent-specific trust metadata; EBSI provides EU-wide legal trust anchoring |
 | OpenID4VC | Credential presentation layer | did:trail provides the trust layer; OID4VC handles credential exchange |
+
+#### Technical Differentiation
+
+| Criterion | did:trail | did:web | did:ion | did:ebsi |
+|-----------|-----------|---------|---------|----------|
+| **Ledger** | HTTP Registry (no blockchain) | DNS + HTTPS | Bitcoin (Sidetree) | EBSI Blockchain (Hyperledger Besu) |
+| **Resolution Latency** | <100ms (HTTP) | <100ms (HTTPS) | 1-30s (Bitcoin confirmation) | <500ms (EBSI nodes) |
+| **AI-Agent-Specific** | Yes (trust tiers, AI policy, risk class) | No | No | No |
+| **EU AI Act Alignment** | Yes (Art. 13/14/26/52 mapping) | No | No | Partial (legal trust, not AI-specific) |
+| **Self-Signed Mode** | Yes (Tier 0, offline) | No (requires domain) | No (requires Bitcoin tx) | No (requires EBSI onboarding) |
+| **Key Rotation** | Yes (history preserved) | Yes (via DID Doc update) | Yes (Sidetree ops) | Yes (via EBSI API) |
+| **Governance** | Open spec + federated registry | Domain owner controls | Bitcoin PoW | EU Commission + Member States |
+| **Cost** | Free (self) / Subscription (registry) | Free (own domain) | Free (ION network) | Free (EU-funded infrastructure) |
+| **GDPR Compliance** | Yes (no PII on-chain) | Yes (server-side) | Problematic (Bitcoin immutability) | Yes (GDPR by design) |
+| **Crypto Agility** | Yes (SUPPORTED_CRYPTOSUITES registry) | Depends on implementation | Limited (Secp256k1) | Yes (eIDAS 2.0 compliant) |
 
 ---
 
@@ -1659,6 +1675,7 @@ This release addresses 9 critical improvements identified during community revie
 | 12 | **Added Specification Versioning** — New §8.9. DID Documents now include `trail:specVersion` for backwards-compatible evolution. Follows Semantic Versioning 2.0.0. | §8.9 (new) |
 | 13 | **Added Revocation Roadmap** — New §8.10 defining the planned W3C Status List 2021 integration for credential revocation. | §8.10 (new) |
 | 14 | **Added Protocol Roadmap** — New §8.11 documenting planned features for v1.2.0 and v2.0.0 including Universal Resolver driver, npm publish, Trust Score Engine, and post-quantum migration. | §8.11 (new) |
+| 15 | **Added EBSI + Technical Differentiation Table** — Added did:ebsi to §1.3 relationship table and new 10-criterion technical comparison matrix (did:trail vs did:web vs did:ion vs did:ebsi). | §1.3 (expanded) |
 
 ### v1.0.0-draft (2026-03-01)
 
