@@ -67,6 +67,10 @@ For minor fixes (typos, formatting), direct PRs are welcome.
 
 Be constructive. Technical disagreement is welcome; personal attacks are not.
 
+## Community
+
+TRAIL is developed in coordination with the [Decentralized Identity Foundation (DIF)](https://identity.foundation) and presented in the Trusted AI Agents Working Group (TAAWG). Join the [DIF Discord](https://identity.foundation/discord) to connect with other contributors.
+
 ## Contact
 
-Christian Hommrich — christian.hommrich@gmail.com
+Christian Hommrich - christian.hommrich@trailsignai.com

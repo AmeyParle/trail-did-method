@@ -144,6 +144,17 @@ Key sections:
 
 ---
 
+## Community & Governance
+
+TRAIL is being developed as an open community standard in coordination with:
+
+- **[Decentralized Identity Foundation (DIF)](https://identity.foundation)** - TRAIL is presented in the [Trusted AI Agents Working Group (TAAWG)](https://identity.foundation) for peer review and alignment with the broader DID ecosystem.
+- **[W3C Credentials Community Group (CCG)](https://www.w3.org/community/credentials/)** - Discussion of `did:trail` in the context of W3C standards. Mailing list: [public-credentials@w3.org](mailto:public-credentials@w3.org)
+
+We welcome critique, co-maintainers, and interoperability proposals from both communities.
+
+---
+
 ## W3C Registry Submission
 
 The `methods/trail.json` file in this repository is submitted for inclusion in the [W3C DID Extensions](https://github.com/w3c/did-extensions).
@@ -193,7 +204,7 @@ We welcome contributions, questions, and challenges. If you find a flaw in the s
 
 - **Open an issue** for specification questions, security concerns, or improvement suggestions
 - **Join the discussion** at the W3C Credentials Community Group: [public-credentials@w3.org](mailto:public-credentials@w3.org)
-- **Contact the author:** christian.hommrich@gmail.com
+- **Contact the author:** christian.hommrich@trailsignai.com
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
