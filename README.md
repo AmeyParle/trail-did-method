@@ -4,6 +4,8 @@
 
 [![W3C DID Core 1.0](https://img.shields.io/badge/W3C-DID%20Core%201.0-blue)](https://www.w3.org/TR/did-core/)
 [![VC Data Model 2.0](https://img.shields.io/badge/W3C-VC%202.0-blue)](https://www.w3.org/TR/vc-data-model-2.0/)
+[![DIF Contributor](https://img.shields.io/badge/DIF-Contributor-blue)](https://identity.foundation)
+[![W3C CCG Member](https://img.shields.io/badge/W3C%20CCG-Member-blue)](https://www.w3.org/community/credentials/)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 [![License: MIT](https://img.shields.io/badge/Code-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Status: Draft](https://img.shields.io/badge/Spec-v1.1.0--draft-orange)](https://github.com/trailprotocol/trail-did-method/issues)
@@ -200,13 +202,15 @@ The `methods/trail.json` file in this repository is submitted for inclusion in t
 
 ## Contribute
 
-We welcome contributions, questions, and challenges. If you find a flaw in the specification — that's exactly what we want to know.
+We welcome contributions, questions, and challenges. If you find a flaw in the specification - that's exactly what we want to know.
 
 - **Open an issue** for specification questions, security concerns, or improvement suggestions
-- **Join the discussion** at the W3C Credentials Community Group: [public-credentials@w3.org](mailto:public-credentials@w3.org)
+- **Submit a PR** - see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines, branch naming, and review process
+- **Join DIF Discord** - connect with contributors in the [DIF Discord](https://discord.gg/decentralized-identity) (#did-methods, TAAWG channels)
+- **Join W3C CCG** - discuss `did:trail` on the mailing list: [public-credentials@w3.org](mailto:public-credentials@w3.org)
 - **Contact the author:** christian.hommrich@trailprotocol.org
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+This project follows the [DIF Code of Conduct](https://github.com/decentralized-identity/org/blob/master/code-of-conduct.md).
 
 ---
 

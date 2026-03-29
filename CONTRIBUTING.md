@@ -65,11 +65,31 @@ For minor fixes (typos, formatting), direct PRs are welcome.
 
 ## Code of Conduct
 
-Be constructive. Technical disagreement is welcome; personal attacks are not.
+This project adheres to the [DIF Code of Conduct](https://github.com/decentralized-identity/org/blob/master/code-of-conduct.md). By participating, you agree to uphold its principles of open, inclusive, and collaborative engagement.
+
+In short: Be constructive. Technical disagreement is welcome; personal attacks are not. Assume good intent. If conflicts arise, follow the [DIF escalation process](https://github.com/decentralized-identity/org/blob/master/code-of-conduct.md#reporting-guidelines).
 
 ## Community
 
-TRAIL is developed in coordination with the [Decentralized Identity Foundation (DIF)](https://identity.foundation) and presented in the Trusted AI Agents Working Group (TAAWG). Join the [DIF Discord](https://identity.foundation/discord) to connect with other contributors.
+TRAIL is developed in coordination with:
+
+- **[Decentralized Identity Foundation (DIF)](https://identity.foundation)** - Join the [DIF Discord](https://discord.gg/decentralized-identity) to connect with other contributors. Relevant channels: `#did-methods`, TAAWG working group channels.
+- **[W3C Credentials Community Group (CCG)](https://www.w3.org/community/credentials/)** - Mailing list: [public-credentials@w3.org](mailto:public-credentials@w3.org). Archive: [lists.w3.org](https://lists.w3.org/Archives/Public/public-credentials/)
+
+## Branch Naming
+
+When submitting PRs, please use one of these branch prefixes:
+
+- `spec/` - Specification changes (e.g., `spec/add-key-rotation-section`)
+- `feat/` - New features or examples (e.g., `feat/python-resolution-example`)
+- `fix/` - Bug fixes (e.g., `fix/typo-in-did-syntax`)
+- `docs/` - Documentation improvements (e.g., `docs/update-roadmap`)
+
+## Licensing
+
+By contributing, you agree that your contributions will be licensed under the project's dual license:
+- **Specification contributions** (`.md` files in `spec/`): [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- **Code contributions**: [MIT License](https://opensource.org/licenses/MIT)
 
 ## Contact
 
