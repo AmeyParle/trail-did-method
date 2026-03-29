@@ -204,7 +204,7 @@ We welcome contributions, questions, and challenges. If you find a flaw in the s
 
 - **Open an issue** for specification questions, security concerns, or improvement suggestions
 - **Join the discussion** at the W3C Credentials Community Group: [public-credentials@w3.org](mailto:public-credentials@w3.org)
-- **Contact the author:** christian.hommrich@trailsignai.com
+- **Contact the author:** christian.hommrich@trailprotocol.org
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 

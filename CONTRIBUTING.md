@@ -73,4 +73,4 @@ TRAIL is developed in coordination with the [Decentralized Identity Foundation (
 
 ## Contact
 
-Christian Hommrich - christian.hommrich@trailsignai.com
+Christian Hommrich - christian.hommrich@trailprotocol.org
