@@ -1,51 +1,72 @@
 # TRAIL Protocol - JavaScript Examples
 
-Working examples showing how to use `did:trail` with Node.js.
+This directory contains runnable JavaScript examples for the `did:trail` DID method using the `@trailprotocol/core` reference implementation.
 
 ## Prerequisites
 
-- Node.js 18+ (uses built-in `crypto` module)
+- Node.js 18 or newer
 - npm
 
 ## Setup
 
+From this directory:
+
 ```bash
-cd examples/js
 npm install
 ```
 
-## Examples
+## Run the examples
 
-### DID Resolution (`did-resolution.js`)
-
-Creates DIDs in all three modes (self, org, agent), builds DID Documents, and resolves a self-issued DID offline.
+### DID resolution example
 
 ```bash
-node did-resolution.js
+npm run did-resolution
 ```
 
-**What you'll learn:**
-- Ed25519 keypair generation
-- The three DID modes and their trust tiers
-- DID Document structure (W3C DID Core 1.0)
-- Offline resolution for self-mode DIDs
+This script demonstrates:
 
-### VC Verification (`vc-verification.js`)
+- generating an Ed25519 keypair
+- creating `did:trail:self`, `did:trail:org`, and `did:trail:agent` identifiers
+- building DID Documents
+- resolving a `did:trail:self` DID locally, without contacting a registry
 
-Issues a self-signed Verifiable Credential with a DataIntegrityProof, then verifies it - including a tamper detection test.
+### Verifiable Credential example
 
 ```bash
-node vc-verification.js
+npm run vc-verification
 ```
 
-**What you'll learn:**
-- Verifiable Credentials 2.0 structure
-- DataIntegrityProof with `eddsa-jcs-2023` cryptosuite
-- JSON Canonicalization (JCS, RFC 8785)
-- Cryptographic verification and tamper detection
+This script demonstrates:
 
-## Reference
+- issuing a self-signed Verifiable Credential
+- inspecting the `DataIntegrityProof`
+- verifying the credential signature
+- detecting tampering by modifying a signed field and verifying again
 
-- [`@trailprotocol/core`](https://www.npmjs.com/package/@trailprotocol/core) - Full API reference
-- [TRAIL DID Method Spec](../../did-method-spec.md) - Specification v1.1.0
-- [CONTRIBUTING.md](../../CONTRIBUTING.md) - How to contribute
+Note: the tampered credential is expected to fail verification because the proof no longer matches the modified credential contents.
+
+### HTTP registry resolution example
+
+```bash
+npm run resolve-http
+```
+
+Or with a custom DID:
+
+```bash
+bash resolve-http.sh "did:trail:org:acme-corp-eu-a7f3b2c1e9d04f5a"
+```
+
+This demonstrates the HTTP resolution pattern for registry-backed `did:trail` identifiers.
+
+Note: this example documents the expected registry HTTP request pattern. A live response depends on the public registry endpoint being reachable from your current environment.
+
+## Package metadata
+
+The local `package.json` defines:
+
+- `npm run did-resolution`
+- `npm run vc-verification`
+- `npm run resolve-http`
+
+and requires Node.js `>=18.0.0`.

@@ -1,37 +1,36 @@
 # TRAIL Protocol - Examples
 
-Working examples demonstrating how to use the `did:trail` DID method in practice.
+This directory contains practical examples for working with the `did:trail` DID method.
 
 ## Sample DID Documents
 
 | File | Description |
 |------|-------------|
-| `self-did-document.json` | Self-issued DID (Tier 0) - no registry, local trust only |
-| `org-did-document.json` | Organization DID with KYB attestation (Tier 1) |
-| `agent-did-document.json` | AI Agent DID with full trust chain (Tier 2) |
+| `self-did-document.json` | Example self-mode DID Document |
+| `org-did-document.json` | Example organization DID Document |
+| `agent-did-document.json` | Example agent DID Document |
 
 ## Code Examples
 
-> Coming soon - contributions welcome! See [Issue #4](https://github.com/trailprotocol/trail-did-method/issues/4).
+The JavaScript examples live in [`examples/js/`](./js/) and demonstrate:
 
-Planned examples:
+- DID generation in `self`, `org`, and `agent` modes
+- DID Document creation
+- local/offline resolution for `did:trail:self`
+- Verifiable Credential issuance and verification
+- tamper detection using `DataIntegrityProof`
 
-- **JavaScript/Node.js** - DID resolution, VC verification
-- More languages welcome via PR
+See [`examples/js/README.md`](./js/README.md) for setup instructions and how to run the scripts.
 
 ## Reference Implementation
 
-The [`@trailprotocol/core`](https://www.npmjs.com/package/@trailprotocol/core) npm package provides the full reference implementation:
+The [`@trailprotocol/core`](https://www.npmjs.com/package/@trailprotocol/core) npm package provides the reference implementation for:
 
 - DID generation and resolution
 - JSON Canonicalization (JCS, RFC 8785)
 - DataIntegrityProof (`eddsa-jcs-2023`)
 - Verifiable Credential issuance and verification
 
-```bash
-npm install @trailprotocol/core
-```
-
 ## Contributing
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines. `examples/` is a great entry point for first-time contributors.
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines. The `examples/` directory is a good entry point for first-time contributors.

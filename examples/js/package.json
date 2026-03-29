@@ -5,7 +5,8 @@
   "description": "TRAIL Protocol usage examples for Node.js",
   "scripts": {
     "did-resolution": "node did-resolution.js",
-    "vc-verification": "node vc-verification.js"
+    "vc-verification": "node vc-verification.js",
+    "resolve-http": "bash resolve-http.sh"
   },
   "dependencies": {
     "@trailprotocol/core": "^0.1.0"

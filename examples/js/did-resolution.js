@@ -5,9 +5,9 @@
  *
  * Demonstrates how to:
  * 1. Generate an Ed25519 keypair
- * 2. Create did:trail DIDs (self, org, agent)
+ * 2. Create did:trail DIDs in self, org, and agent modes
  * 3. Build DID Documents
- * 4. Resolve a did:trail DID offline (self-mode)
+ * 4. Resolve a did:trail:self DID locally (offline)
  *
  * Prerequisites:
  *   npm install @trailprotocol/core
@@ -29,6 +29,7 @@ async function main() {
   // -------------------------------------------------------
   // Step 1: Generate an Ed25519 keypair
   // -------------------------------------------------------
+  // This keypair is the cryptographic root of the DID identity.
   const keys = generateKeyPair();
   console.log('=== Key Generation ===');
   console.log('Public key (multibase):', keys.publicKeyMultibase);
@@ -36,35 +37,38 @@ async function main() {
   console.log();
 
   // -------------------------------------------------------
-  // Step 2: Create DIDs in all three modes
+  // Step 2: Create DIDs in all three TRAIL modes
   // -------------------------------------------------------
-
-  // Self DID (Tier 0) - no registry needed, local trust only
   const selfDid = createSelfDid(keys.publicKeyMultibase);
+  const orgDid = createOrgDid('Acme Corporation', keys.publicKeyMultibase);
+  const agentDid = createAgentDid('Sales Assistant', keys.publicKeyMultibase);
+
   console.log('=== DID Creation ===');
   console.log('Self DID: ', selfDid);
-
-  // Org DID (Tier 1) - for organizations with KYB attestation
-  const orgDid = createOrgDid('Acme Corporation', keys.publicKeyMultibase);
   console.log('Org DID:  ', orgDid);
-
-  // Agent DID (Tier 2) - for AI agents with full trust chain
-  const agentDid = createAgentDid('Sales Assistant', keys.publicKeyMultibase);
   console.log('Agent DID:', agentDid);
+  console.log();
+
+  console.log('Mode summary:');
+  console.log('  self  -> local/offline identity using embedded public key');
+  console.log('  org   -> organization identifier format for registry-backed use');
+  console.log('  agent -> agent/service identifier format, typically linked to a parent org');
   console.log();
 
   // -------------------------------------------------------
   // Step 3: Build DID Documents
   // -------------------------------------------------------
+  // A DID Document describes the public keys, verification methods,
+  // and optional services associated with a DID.
   console.log('=== DID Documents ===');
 
-  // Self DID Document - simplest form
+  // Self DID Document: simplest form, suitable for local/offline verification.
   const selfDoc = createDidDocument(selfDid, keys, { mode: 'self' });
   console.log('Self DID Document:');
   console.log(JSON.stringify(selfDoc, null, 2));
   console.log();
 
-  // Agent DID Document - with parent organization reference
+  // Agent DID Document: includes a parent organization reference and registry service.
   const agentDoc = createDidDocument(agentDid, keys, {
     mode: 'agent',
     parentOrganization: orgDid,
@@ -77,8 +81,8 @@ async function main() {
   // -------------------------------------------------------
   // Step 4: Resolve a self DID (offline resolution)
   // -------------------------------------------------------
-  // Self-mode DIDs can be resolved without a registry because
-  // the public key is embedded in the DID itself.
+  // Self-mode DIDs can be resolved without a registry because the
+  // public key is embedded directly in the DID identifier.
   console.log('=== DID Resolution ===');
   const resolver = new TrailResolver();
   const result = await resolver.resolve(selfDid);
@@ -90,9 +94,8 @@ async function main() {
   console.log('  Trust Tier:', result.didDocument['trail:trailTrustTier']);
   console.log();
 
-  // TODO: Add registry-based resolution for org/agent DIDs
-  // (requires a running TRAIL Registry instance)
-
+  // Registry-based resolution for org/agent DIDs is typically performed
+  // via the TRAIL registry HTTP API rather than offline reconstruction.
   console.log('Done. All examples completed successfully.');
 }
 
