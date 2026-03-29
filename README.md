@@ -124,7 +124,13 @@ trail-did-method/
 
 ---
 
-## Specification
+## Documentation
+
+### Technical Whitepaper
+
+The full TRAIL Protocol Technical Whitepaper v1.0 is available at [trailprotocol.org/whitepaper](https://trailprotocol.org/whitepaper) (CC BY 4.0). It covers the complete architecture, cryptographic design, CA infrastructure, Trust Badge widget, and EU AI Act compliance mapping.
+
+### DID Method Specification
 
 The full `did:trail` DID Method Specification v1.1.0-draft is available in [`spec/did-method-trail-v1.md`](spec/did-method-trail-v1.md).
 
