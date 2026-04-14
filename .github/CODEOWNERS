@@ -1,0 +1,15 @@
+# CODEOWNERS for trail-did-method
+# Chris retains final approval authority on spec and governance files.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-security/customizing-your-repository/about-code-owners
+
+# Default: Chris owns everything unless overridden below
+*                           @chrishooooo-netizen
+
+# Spec is Chris-lead — all changes require his review
+/spec/**                    @chrishooooo-netizen
+
+# Governance & meta
+/.github/**                 @chrishooooo-netizen
+/CODEOWNERS                 @chrishooooo-netizen
+/LICENSE                    @chrishooooo-netizen
+/README.md                  @chrishooooo-netizen
