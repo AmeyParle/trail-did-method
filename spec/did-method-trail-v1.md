@@ -524,6 +524,68 @@ The `https://trailprotocol.org/ns/did/v1` JSON-LD context defines the following 
 }
 ```
 
+### 5.4 Cross-Method Binding
+
+A `did:trail` DID MAY declare equivalence or role-profile associations with DIDs from other methods using the standard W3C DID Core `alsoKnownAs` property. This enables `did:trail` to function as a **persistent identity anchor** while other DID methods carry domain-specific, ephemeral, or role-specific identity layers.
+
+**Motivating use cases:**
+- An AI agent holds a `did:trail:agent` DID as its authoritative identity and a `did:web` DID for domain-based discoverability.
+- An organization links its `did:trail:org` DID to a `did:ebsi` DID for EU regulatory contexts.
+- A self-signed agent (`trail:trailMode: "self"`) binds its `did:trail` DID to an ephemeral `did:key` for lightweight interactions.
+
+In all cases, the `did:trail` DID is the trust-bearing anchor. Bound DIDs derive their TRAIL trust context from it.
+
+#### 5.4.1 Binding Declaration
+
+A `did:trail` DID Document MAY include one or more bound DIDs in the `alsoKnownAs` array:
+
+```json
+{
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    "https://trailprotocol.org/ns/did/v1"
+  ],
+  "id": "did:trail:agent:acme-corp-eu-rfq-assistant-v1-d4e5f6a7b8c3d4e5",
+  "alsoKnownAs": [
+    "did:web:acme-corp.eu:agents:rfq-assistant",
+    "did:key:z6Mkf5rGMoatrSj1f4CyvuHBeXJELe9y84QKmekF3tiHYa2n"
+  ]
+}
+```
+
+The order of entries in `alsoKnownAs` carries no normative significance. A single `did:trail` DID MAY bind to multiple DIDs from the same or different methods.
+
+#### 5.4.2 Binding Verification
+
+To establish a **verified cross-method binding**, a verifier MUST confirm bidirectionality:
+
+1. Resolve the `did:trail` DID Document and extract `alsoKnownAs` entries.
+2. For each bound DID: resolve that DID Document and verify it contains an `alsoKnownAs` entry referencing the originating `did:trail` DID.
+3. If the back-reference is absent, the binding is **declared but unverified**.
+
+A binding is **verified** if and only if both DID Documents reference each other via `alsoKnownAs`. Implementations MAY accept declared bindings at reduced trust, but MUST NOT assign TRAIL trust tier or certification status properties to unverified bindings.
+
+#### 5.4.3 Trust Inheritance
+
+When a verified binding exists, the following rules apply:
+
+| Scenario | Rule |
+|----------|------|
+| Bound DID has conflicting `aiSystemType` | `did:trail` document takes precedence |
+| Bound DID has conflicting `euAiActRiskClass` | `did:trail` document takes precedence |
+| Bound DID has no TRAIL-specific properties | Properties from `did:trail` document apply to the binding context |
+| Bound DID is deactivated or revoked | Binding SHOULD be removed from `did:trail` document on next update |
+
+`trail:trailTrustTier`, `TrailCertificationStatus`, and Trust Score (§7.2, §7.3) are properties of the `did:trail` DID exclusively and are NOT inherited or mirrored by bound DIDs.
+
+#### 5.4.4 Security Considerations
+
+**Spoofing risk:** Any DID Document from another method can declare `alsoKnownAs: ["did:trail:agent:..."]` without the `did:trail` document reciprocating. Verifiers MUST NOT grant TRAIL trust properties on the basis of a unidirectional claim alone.
+
+**Key material independence:** Cross-method binding does NOT imply shared key material. Each bound DID maintains independent verification methods. The binding is a semantic association, not a cryptographic key linkage.
+
+**Revocation scope:** Revocation of a `did:trail` DID (§6.4) does NOT automatically revoke bound DIDs from other methods. The bound DID's controller is solely responsible for reflecting the deactivation state in their own DID Document.
+
 ---
 
 ## 6. Method Operations
@@ -2190,6 +2252,12 @@ Addresses Issue [#1](https://github.com/trailprotocol/trail-did-method/issues/1)
 | 7 | **Added Revocation Propagation Protocol (normative)** — New §8.7 specifying: exactly one authoritative registry per DID via `TrailRegistryService` endpoint; mandatory signed W3C Status List 2021 credential per registry; verifier polling with ≤1h cache consistent with §8.6; cross-registry score verification requires verifier-side recomputation from §7.3.4 raw inputs (eliminates score-laundering); end-to-end revocation latency budget. Closes E-014. | §8.7 (new), §8.6, §7.3.4 |
 | 8 | **Renumbered §8.7–§8.11 → §8.8–§8.12** — Key Recovery, Key Rotation Protocol, Specification Versioning, Revocation Roadmap, and Protocol Roadmap shifted down by one to make room for the new §8.7 Revocation Propagation Protocol. All cross-references updated. | §8.8–§8.12 |
 | 9 | **Added Agent Declaration in Content Signatures (normative)** — New §8.13 defining the `AgentDeclaration` signature pattern: cryptographically binds AI-generated content artifacts to an agent DID and an accountable organization DID. Provides attribution, integrity, non-repudiation, and revocation-awareness properties required under EU AI Act Art. 12. Includes signature format (§8.13.2), verification algorithm (§8.13.3), accountability model (§8.13.4), audit trail mapping (§8.13.5), and security considerations (§8.13.6). | §8.13 (new) |
+
+#### v1.2.0-draft Addendum (2026-04-21)
+
+| # | Change | Sections Affected |
+|---|--------|-------------------|
+| 10 | **Added Cross-Method Binding (normative)** — New §5.4 specifying how a `did:trail` DID may declare associations with DIDs from other methods via the W3C DID Core `alsoKnownAs` property. Defines binding declaration, bidirectional verification algorithm, trust inheritance rules (did:trail takes precedence on conflicting TRAIL-specific properties), and security considerations (spoofing risk, key material independence, revocation scope). No new JSON-LD context terms required. | §5.4 (new) |
 
 ### v1.1.0-draft (2026-03-04)
 
