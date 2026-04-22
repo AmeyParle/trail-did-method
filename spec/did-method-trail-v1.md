@@ -1661,9 +1661,9 @@ The following items are documented to ensure continuity and enable community fee
 | JSON-LD Context Deployment | ✅ Shipped | `https://trailprotocol.org/ns/trail/v1` live as of 2026-04-21. |
 | Cross-Method Binding (§5.4) | ✅ Shipped | `alsoKnownAs`-based binding to DIDs from other methods. |
 | AgentDeclaration Content Signatures (§8.13) | ✅ Shipped | Cryptographic binding of AI-generated artifacts to agent DID. |
-| Universal Resolver Driver | ⏳ Pending | Requires registry server (v2.0.0). |
-| npm Publish (`@trailprotocol/core`) | ⏳ Pending | Package scaffolded; publication after v1.3.0 conformance test coverage. |
-| CI/CD Pipeline | ⏳ Pending | GitHub Actions build/test/lint harness. Blocked on conformance test suite. |
+| Universal Resolver Driver | ✅ Shipped | DIF Universal Resolver driver published via [DIF PR #546](https://github.com/decentralized-identity/universal-resolver/pull/546); image available on GitHub Container Registry. |
+| npm Publish (`@trailprotocol/core`) | ✅ Shipped | `@trailprotocol/core@0.1.0` live on npm. |
+| CI/CD Pipeline | ✅ Shipped | GitHub Actions `ci.yml` (build + test + lint) active on `main` and pull requests. |
 
 **v1.3.0 (planned)**
 
