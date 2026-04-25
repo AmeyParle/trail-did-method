@@ -33,7 +33,7 @@ Spec changes MUST precede code changes for all protocol-level modifications.
 
 - Any change to did:trail resolution logic, key formats, or trust anchors MUST be specified in `spec/` first
 - A spec PR MUST be reviewed before the corresponding implementation PR is opened
-- The TRAIL Projektgedaechtnis MUST be read at the start of every spec-edit session (Gate 2)
+- The TRAIL development history (`CHANGELOG.md`) MUST be reviewed at the start of every spec-edit session (Gate 2)
 
 ### IV. Federation as First-Class Operation
 
@@ -69,9 +69,9 @@ TRAIL spec changes to resolution logic, key formats, or trust anchors MUST be ba
 ## Governance
 
 - This constitution supersedes all other TRAIL development practices
-- Amendments require: (1) documented rationale, (2) version bump, (3) TRAIL Projektgedaechtnis entry
+- Amendments require: (1) documented rationale, (2) version bump, (3) `CHANGELOG.md` entry
 - All spec PRs and public commits are subject to Gate 1 (preflight script) and Gate 2 (this constitution)
 - Complexity MUST be justified against the W3C DID Core spec or EU AI Act compliance requirements
-- Runtime development guidance: `CONTRIBUTING.md` and `TRAIL Projektgedaechtnis`
+- Runtime development guidance: `CONTRIBUTING.md` and `CHANGELOG.md`
 
 **Version**: 1.1.0 | **Ratified**: TODO(RATIFICATION_DATE): confirm founding date | **Last Amended**: 2026-04-25
