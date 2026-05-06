@@ -1,0 +1,16 @@
+{
+  "scope": "trust-score",
+  "section": "§7.3 dimension value range",
+  "expected": "invalid",
+  "description": "Each dimension D1-D5 MUST be in the range [0, 100]. Values outside this range are non-conformant and a verifier MUST reject the score input.",
+  "input": {
+    "dimensions": {
+      "D1_identity_verification": 150,
+      "D2_credential_validity": 80,
+      "D3_information_provenance": 80,
+      "D4_governance_compliance": 80,
+      "D5_operational_history": 80
+    }
+  },
+  "expectedError": "dimension values MUST be in [0, 100]"
+}

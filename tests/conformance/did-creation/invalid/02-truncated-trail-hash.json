@@ -1,0 +1,10 @@
+{
+  "scope": "did-creation",
+  "section": "§4.5 trail-hash length",
+  "expected": "invalid",
+  "description": "trail-hash MUST be exactly 16 hex characters (lower-case). 8-char hashes are non-conformant per Issue #8 fix.",
+  "input": {
+    "did": "did:trail:org:acme-bd70674e"
+  },
+  "expectedError": "trail-hash suffix MUST be 16 hex characters"
+}

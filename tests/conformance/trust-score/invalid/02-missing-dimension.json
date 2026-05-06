@@ -1,0 +1,15 @@
+{
+  "scope": "trust-score",
+  "section": "§7.3 all dimensions REQUIRED",
+  "expected": "invalid",
+  "description": "All five dimensions D1-D5 are REQUIRED to compute a conformant Trust Score. Missing dimensions MUST cause rejection (do not default to 0 or skip).",
+  "input": {
+    "dimensions": {
+      "D1_identity_verification": 80,
+      "D2_credential_validity": 80,
+      "D4_governance_compliance": 80,
+      "D5_operational_history": 80
+    }
+  },
+  "expectedError": "all five dimensions D1-D5 are REQUIRED"
+}

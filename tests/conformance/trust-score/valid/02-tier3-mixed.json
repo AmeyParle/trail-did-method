@@ -1,0 +1,17 @@
+{
+  "scope": "trust-score",
+  "section": "§7.3 Trust Score averaging + tier thresholds",
+  "expected": "valid",
+  "description": "Mixed dimensions averaging 60 yields Tier 'tier-3-endorsement'. Tier thresholds: 90+ = tier-1-root, 70-89 = tier-2-sub, 50-69 = tier-3-endorsement, <50 = tier-4-self.",
+  "input": {
+    "dimensions": {
+      "D1_identity_verification": 80,
+      "D2_credential_validity": 60,
+      "D3_information_provenance": 40,
+      "D4_governance_compliance": 70,
+      "D5_operational_history": 50
+    }
+  },
+  "expectedScore": 60,
+  "expectedTier": "tier-3-endorsement"
+}

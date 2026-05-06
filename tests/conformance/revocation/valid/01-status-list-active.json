@@ -1,0 +1,17 @@
+{
+  "scope": "revocation",
+  "section": "§7.3 / §8.7 BitstringStatusList",
+  "expected": "valid",
+  "description": "A non-revoked credential MUST have its bit at credentialStatus.statusListIndex set to 0 in the resolved BitstringStatusListCredential.",
+  "input": {
+    "credentialStatus": {
+      "id": "https://registry.trailprotocol.org/v1/status-lists/main#42",
+      "type": "BitstringStatusListEntry",
+      "statusPurpose": "revocation",
+      "statusListIndex": "42",
+      "statusListCredential": "https://registry.trailprotocol.org/v1/status-lists/main"
+    },
+    "statusListBitAtIndex42": 0
+  },
+  "expectedRevoked": false
+}

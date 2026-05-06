@@ -1,0 +1,17 @@
+{
+  "scope": "trust-score",
+  "section": "§7.3 Trust Score (D1-D5) and Tier mapping",
+  "expected": "valid",
+  "description": "All five dimensions at maximum yield Trust Score 100 and Tier 'tier-1-root'. The score is the unweighted average of D1-D5 (each 0-100).",
+  "input": {
+    "dimensions": {
+      "D1_identity_verification": 100,
+      "D2_credential_validity": 100,
+      "D3_information_provenance": 100,
+      "D4_governance_compliance": 100,
+      "D5_operational_history": 100
+    }
+  },
+  "expectedScore": 100,
+  "expectedTier": "tier-1-root"
+}

@@ -1,0 +1,14 @@
+{
+  "scope": "did-resolution",
+  "section": "§6.2 error codes",
+  "expected": "invalid",
+  "description": "Resolving an unknown org DID MUST return notFound in didResolutionMetadata.error.",
+  "input": {
+    "did": "did:trail:org:unknown-0000000000000000"
+  },
+  "expectedError": {
+    "didResolutionMetadata": {
+      "error": "notFound"
+    }
+  }
+}

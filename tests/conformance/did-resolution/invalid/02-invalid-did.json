@@ -1,0 +1,14 @@
+{
+  "scope": "did-resolution",
+  "section": "§6.2 error codes",
+  "expected": "invalid",
+  "description": "Resolving a syntactically invalid DID MUST return invalidDid in didResolutionMetadata.error and MUST NOT return a didDocument.",
+  "input": {
+    "did": "did:trail:org:acme-NOT_HEX!"
+  },
+  "expectedError": {
+    "didResolutionMetadata": {
+      "error": "invalidDid"
+    }
+  }
+}

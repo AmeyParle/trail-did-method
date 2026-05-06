@@ -1,0 +1,16 @@
+{
+  "scope": "did-resolution",
+  "section": "§6.2 resolution result envelope",
+  "expected": "valid",
+  "description": "A resolver MUST return a result containing didDocument, didDocumentMetadata, and didResolutionMetadata with at least contentType set to application/did+ld+json.",
+  "input": {
+    "did": "did:trail:self:z3KMQXnVKR9qMzkJFfoo9WAYb1A7rdUbEkDCwNWTp6uJX"
+  },
+  "expectedShape": {
+    "didDocument": "object (W3C DID Document)",
+    "didDocumentMetadata": "object",
+    "didResolutionMetadata": {
+      "contentType": "application/did+ld+json"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "scope": "did-creation",
+  "section": "§4.2 self mode",
+  "expected": "valid",
+  "description": "Self-mode DID derived directly from publicKeyMultibase. No registry lookup required.",
+  "input": {
+    "mode": "self",
+    "publicKeyMultibase": "z3KMQXnVKR9qMzkJFfoo9WAYb1A7rdUbEkDCwNWTp6uJX"
+  },
+  "output": {
+    "did": "did:trail:self:z3KMQXnVKR9qMzkJFfoo9WAYb1A7rdUbEkDCwNWTp6uJX"
+  }
+}

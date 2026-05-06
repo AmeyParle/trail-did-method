@@ -1,0 +1,16 @@
+{
+  "scope": "revocation",
+  "section": "§7.3 statusPurpose enum",
+  "expected": "invalid",
+  "description": "statusPurpose MUST be 'revocation' or 'suspension'. Any other value is non-conformant.",
+  "input": {
+    "credentialStatus": {
+      "id": "https://registry.trailprotocol.org/v1/status-lists/main#9",
+      "type": "BitstringStatusListEntry",
+      "statusPurpose": "expired",
+      "statusListIndex": "9",
+      "statusListCredential": "https://registry.trailprotocol.org/v1/status-lists/main"
+    }
+  },
+  "expectedError": "statusPurpose MUST be one of: revocation, suspension"
+}

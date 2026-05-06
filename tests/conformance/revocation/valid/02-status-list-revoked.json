@@ -1,0 +1,17 @@
+{
+  "scope": "revocation",
+  "section": "§7.3 / §8.7 BitstringStatusList",
+  "expected": "valid",
+  "description": "A revoked credential MUST have its bit at credentialStatus.statusListIndex set to 1. Verifiers MUST treat the credential as revoked.",
+  "input": {
+    "credentialStatus": {
+      "id": "https://registry.trailprotocol.org/v1/status-lists/main#7",
+      "type": "BitstringStatusListEntry",
+      "statusPurpose": "revocation",
+      "statusListIndex": "7",
+      "statusListCredential": "https://registry.trailprotocol.org/v1/status-lists/main"
+    },
+    "statusListBitAtIndex7": 1
+  },
+  "expectedRevoked": true
+}

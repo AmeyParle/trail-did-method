@@ -1,0 +1,10 @@
+{
+  "scope": "did-creation",
+  "section": "§4.1 method name",
+  "expected": "invalid",
+  "description": "DIDs MUST start with 'did:trail:'. Any other method prefix (or wrong casing) MUST be rejected.",
+  "input": {
+    "did": "did:Trail:org:acme-bd70674e4dff8c3a"
+  },
+  "expectedError": "DID method name MUST be exactly 'did:trail:' (case-sensitive)"
+}

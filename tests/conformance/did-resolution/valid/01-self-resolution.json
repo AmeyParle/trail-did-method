@@ -1,0 +1,24 @@
+{
+  "scope": "did-resolution",
+  "section": "§6.2 read/resolve",
+  "expected": "valid",
+  "description": "Resolving a self-mode DID MUST return a DID Document with @context array (W3C v1 first, TRAIL v1 second), id matching input, and at least one verificationMethod whose publicKeyMultibase matches the suffix.",
+  "input": {
+    "did": "did:trail:self:z3KMQXnVKR9qMzkJFfoo9WAYb1A7rdUbEkDCwNWTp6uJX"
+  },
+  "expectedDocument": {
+    "@context": [
+      "https://www.w3.org/ns/did/v1",
+      "https://trailprotocol.org/ns/did/v1"
+    ],
+    "id": "did:trail:self:z3KMQXnVKR9qMzkJFfoo9WAYb1A7rdUbEkDCwNWTp6uJX",
+    "verificationMethod": [
+      {
+        "id": "did:trail:self:z3KMQXnVKR9qMzkJFfoo9WAYb1A7rdUbEkDCwNWTp6uJX#key-1",
+        "type": "Multikey",
+        "controller": "did:trail:self:z3KMQXnVKR9qMzkJFfoo9WAYb1A7rdUbEkDCwNWTp6uJX",
+        "publicKeyMultibase": "z3KMQXnVKR9qMzkJFfoo9WAYb1A7rdUbEkDCwNWTp6uJX"
+      }
+    ]
+  }
+}
