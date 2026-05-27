@@ -51,6 +51,7 @@ internal-founding-slots|[Ff]ounding [Ss]lots
 internal-dogfooding|[Dd]ogfooding
 internal-flywheel|\b[Ff]lywheel\b
 internal-kunden-deliverable|Kunden-Deliverable
+unhardened-claude-action|uses:[[:space:]]*anthropics/claude-code-action
 EOF
 )
 
