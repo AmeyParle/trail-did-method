@@ -209,7 +209,7 @@ Federation is a normative feature of the trust architecture. A conforming `did:t
 
 ### 3.4 Trust Anchor Model
 
-TRAIL does not rely on a single hard-coded trust anchor. Instead, it defines a **federated hybrid trust model** with three explicit tiers. Verifiers select which roots to trust via a Trust List (see §3.4.4). This section addresses Challenge Register einwand E-013 (Federation Trust Anchor Model) and closes the "MAY operate as standalone" ambiguity previously found in §3.3.
+TRAIL does not rely on a single hard-coded trust anchor. Instead, it defines a **federated hybrid trust model** with three explicit tiers. Verifiers select which roots to trust via a Trust List (see §3.4.4). This section defines the Federation Trust Anchor Model and closes the "MAY operate as standalone" ambiguity previously found in §3.3.
 
 #### 3.4.1 Tier 1 — Root Registries
 
@@ -1430,7 +1430,7 @@ Verifiers MUST check credential revocation status at verification time. Cached r
 
 ### 8.7 Revocation Propagation Protocol
 
-This section defines how credential revocation propagates from the authoritative registry to verifiers in federated and cross-registry deployments. It addresses Challenge Register einwand E-014 (Cross-Registry Verification + Revocation Propagation) by making §8.6 actionable.
+This section defines how credential revocation propagates from the authoritative registry to verifiers in federated and cross-registry deployments. It makes the cross-registry verification and revocation propagation requirements of §8.6 actionable.
 
 #### 8.7.1 Authoritative Registry
 
@@ -2267,13 +2267,13 @@ Tracking issue: [Issue #9](https://github.com/trailprotocol/trail-did-method/iss
 
 #### v1.2.0 Addendum (2026-04-14) — Issue #1 PR-Bundle
 
-Addresses Issue [#1](https://github.com/trailprotocol/trail-did-method/issues/1) (Federation + Trust Anchor). Builds on the technical memo from Amey Parle (2026-04-13) and closes Challenge Register einwaende E-013 (Federation Trust Anchor Model) and E-014 (Cross-Registry Verification + Revocation Propagation). Co-architected with Amey Parle.
+Addresses Issue [#1](https://github.com/trailprotocol/trail-did-method/issues/1) (Federation + Trust Anchor). Builds on the technical memo from Amey Parle (2026-04-13), covering the Federation Trust Anchor Model and Cross-Registry Verification + Revocation Propagation. Co-architected with Amey Parle.
 
 | # | Change | Sections Affected |
 |---|--------|-------------------|
-| 5 | **Added Trust Anchor Model (normative)** — New §3.4 defining the federated hybrid trust model: Tier-1 Root Registries (TSAI + curated operators, mutual recognition), Tier-2 Sub-Registries (delegation from Tier-1, CA-like without single anchor), Tier-3 endpoint endorsements (web-of-trust with Risk Penalty discount in §7.3 D5). Verifiers select trust anchors via a local Trust List. Closes E-013. | §3.4 (new), §3.3.3 |
+| 5 | **Added Trust Anchor Model (normative)** — New §3.4 defining the federated hybrid trust model: Tier-1 Root Registries (TSAI + curated operators, mutual recognition), Tier-2 Sub-Registries (delegation from Tier-1, CA-like without single anchor), Tier-3 endpoint endorsements (web-of-trust with Risk Penalty discount in §7.3 D5). Verifiers select trust anchors via a local Trust List. | §3.4 (new), §3.3.3 |
 | 6 | **Federation requirements hardened** — §3.3.3 updated: registry discovery and cross-registry referrals are now MUST-level. "MAY operate as a standalone registry without federation support" removed; every conforming registry must declare a §3.4 tier. | §3.3.3 |
-| 7 | **Added Revocation Propagation Protocol (normative)** — New §8.7 specifying: exactly one authoritative registry per DID via `TrailRegistryService` endpoint; mandatory signed W3C Status List 2021 credential per registry; verifier polling with ≤1h cache consistent with §8.6; cross-registry score verification requires verifier-side recomputation from §7.3.4 raw inputs (eliminates score-laundering); end-to-end revocation latency budget. Closes E-014. | §8.7 (new), §8.6, §7.3.4 |
+| 7 | **Added Revocation Propagation Protocol (normative)** — New §8.7 specifying: exactly one authoritative registry per DID via `TrailRegistryService` endpoint; mandatory signed W3C Status List 2021 credential per registry; verifier polling with ≤1h cache consistent with §8.6; cross-registry score verification requires verifier-side recomputation from §7.3.4 raw inputs (eliminates score-laundering); end-to-end revocation latency budget. | §8.7 (new), §8.6, §7.3.4 |
 | 8 | **Renumbered §8.7–§8.11 → §8.8–§8.12** — Key Recovery, Key Rotation Protocol, Specification Versioning, Revocation Roadmap, and Protocol Roadmap shifted down by one to make room for the new §8.7 Revocation Propagation Protocol. All cross-references updated. | §8.8–§8.12 |
 | 9 | **Added Agent Declaration in Content Signatures (normative)** — New §8.13 defining the `AgentDeclaration` signature pattern: cryptographically binds AI-generated content artifacts to an agent DID and an accountable organization DID. Provides attribution, integrity, non-repudiation, and revocation-awareness properties required under EU AI Act Art. 12. Includes signature format (§8.13.2), verification algorithm (§8.13.3), accountability model (§8.13.4), audit trail mapping (§8.13.5), and security considerations (§8.13.6). | §8.13 (new) |
 
