@@ -9,3 +9,6 @@ outreach-drafts/
 
 # Spec-Kit integration (may contain auth tokens)
 .claude/
+
+# Private preflight pattern overlay — internal vocabulary, must stay local
+scripts/.preflight-patterns.local

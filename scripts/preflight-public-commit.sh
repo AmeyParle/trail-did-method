@@ -34,26 +34,33 @@ echo "${YLW}[preflight]${NC} scanning range: $RANGE"
 FAIL=0
 
 # Banned regex patterns. Each line: <label>|<regex>
+#
+# Only GENERIC, non-sensitive patterns live in this PUBLIC file. Private/internal
+# literal patterns (workspace name, private addresses, internal vocabulary) are loaded
+# from a gitignored local overlay below — hardcoding those literals here would itself
+# be the leak this guard exists to prevent.
 PATTERNS=$(cat <<'EOF'
 notion-url|notion\.so/[a-zA-Z0-9_-]*[a-f0-9]{32}
 private-notion-page-id|\b[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\b
-private-roadmap-filename|TRAIL_Roadmap_v[0-9]
-private-projektgedaechtnis|TRAIL_Projektgedaechtnis
-private-eisenhower-file|eisenhower_(prioritaeten|trail)
-private-workspace-path|/Users/chrisho/
-private-sales-disrupt-path|Sales Disrupt
-tsai-gmbh-framing|TrailSign AI GmbH
-private-email-trailsignai|@trailsignai\.com
-private-email-gmail|christian\.hommrich@gmail\.com
-internal-superspreading|[Ss]uperspreading
-internal-projektgedaechtnis|[Pp]rojektgedaechtnis
-internal-founding-slots|[Ff]ounding [Ss]lots
-internal-dogfooding|[Dd]ogfooding
-internal-flywheel|\b[Ff]lywheel\b
-internal-kunden-deliverable|Kunden-Deliverable
+local-home-path|/Users/[^/[:space:]]+/
 unhardened-claude-action|uses:[[:space:]]*anthropics/claude-code-action
 EOF
 )
+
+# Load private/internal literal patterns from a gitignored local overlay if present.
+# Keeps the sensitive vocabulary out of this public script while preserving full
+# detection on the maintainer's machine (where the overlay exists). On a fresh clone
+# without the overlay, only the generic patterns above run — warn so it isn't silently
+# toothless.
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+LOCAL_PATTERNS="$SCRIPT_DIR/.preflight-patterns.local"
+if [ -f "$LOCAL_PATTERNS" ]; then
+  EXTRA=$(grep -vE '^[[:space:]]*(#|$)' "$LOCAL_PATTERNS")
+  [ -n "$EXTRA" ] && PATTERNS="$PATTERNS
+$EXTRA"
+else
+  echo "${YLW}[preflight]${NC} note: no scripts/.preflight-patterns.local — running generic patterns only."
+fi
 
 check_text() {
   local label="$1"
