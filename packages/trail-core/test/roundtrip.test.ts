@@ -1,5 +1,6 @@
 import { describe, it } from 'node:test';
 import * as assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { generateKeyPair } from '../src/keygen';
 import { createSelfDid, createOrgDid, createAgentDid, parseTrailDid } from '../src/did';
 import { createDidDocument, rotateKey, SPEC_VERSION } from '../src/document';
@@ -10,7 +11,11 @@ import { createSelfSignedCredential, verifyCredential, createBindingProofCredent
 import type { VerifyBindingProofInput } from '../src/credential';
 import type { DidDocument, StatusList2021Entry } from '../src/types';
 import { encode, decode, encodeMultibase, decodeMultibase } from '../src/base58';
-import { jcsCanonicalizeToString } from '../src/jcs';
+import { jcsCanonicalizeToString, jcsCanonicalizeToBuffer } from '../src/jcs';
+
+function sha256Hex(buf: Buffer): string {
+  return createHash('sha256').update(buf).digest('hex');
+}
 
 describe('JCS (RFC 8785)', () => {
   it('sorts object keys by UTF-16 code unit order', () => {
@@ -51,6 +56,44 @@ describe('JCS (RFC 8785)', () => {
   it('rejects NaN and Infinity', () => {
     assert.throws(() => jcsCanonicalizeToString(NaN), /NaN/);
     assert.throws(() => jcsCanonicalizeToString(Infinity), /Infinity/);
+  });
+
+  it('matches spec §14.4 JCS canonicalization test vector', () => {
+    const input = {
+      id: 'did:trail:self:z3KMQXnVKR9qMzkJFfoo9WAYb1A7rdUbEkDCwNWTp6uJX',
+      '@context': ['https://www.w3.org/ns/did/v1'],
+    };
+    const expectedJcs =
+      '{"@context":["https://www.w3.org/ns/did/v1"],"id":"did:trail:self:z3KMQXnVKR9qMzkJFfoo9WAYb1A7rdUbEkDCwNWTp6uJX"}';
+    assert.strictEqual(jcsCanonicalizeToString(input), expectedJcs);
+    // §14.4 SHA-256 (hex) of the JCS output, as published in the spec.
+    assert.strictEqual(
+      sha256Hex(jcsCanonicalizeToBuffer(input)),
+      '4c882a71d1796fabe2aa94748f6035c1e7581f984f3785291d403090b36ed208'
+    );
+  });
+
+  it('matches spec §14.5 numeric canonicalization test vector', () => {
+    const input = { 'trail:trailTrustTier': 0, threshold: 2 };
+    const expectedJcs = '{"threshold":2,"trail:trailTrustTier":0}';
+    assert.strictEqual(jcsCanonicalizeToString(input), expectedJcs);
+    // §14.5 SHA-256 (hex) of the JCS output, as published in the spec.
+    assert.strictEqual(
+      sha256Hex(jcsCanonicalizeToBuffer(input)),
+      'db373549d7bc7aafab4c890b8ef07bff9ef28bc85a21edbcde917c2095168af0'
+    );
+  });
+
+  it('§14.5 verifier roundtrip conformance: canonicalize → parse → canonicalize is byte-identical', () => {
+    const input = { 'trail:trailTrustTier': 0, threshold: 2 };
+    const once = jcsCanonicalizeToString(input);
+    const roundtripped = jcsCanonicalizeToString(JSON.parse(once));
+    assert.strictEqual(once, roundtripped);
+  });
+
+  it('§14.5 numeric edge cases: 1.0 collapses to 1, -0 normalizes to 0', () => {
+    assert.strictEqual(jcsCanonicalizeToString(JSON.parse('{"x":1.0}')), '{"x":1}');
+    assert.strictEqual(jcsCanonicalizeToString(JSON.parse('{"x":-0}')), '{"x":0}');
   });
 
   it('produces stable output for DID documents', () => {
@@ -286,6 +329,69 @@ describe('DataIntegrityProof', () => {
 
     const valid = verifyProof(doc, proof, keys2.publicKeyBytes);
     assert.ok(!valid);
+  });
+
+  // eddsa-jcs-2023 W3C conformance fix. Per VC-DI-EDDSA §3.3
+  // (Hashing §3.3.4 / Proof Configuration §3.3.5), the signature MUST bind
+  // the proof's own metadata (verificationMethod, created, proofPurpose,
+  // cryptosuite), not just the document. These tests pin that behavior down:
+  // before the fix, all four mutations below verified successfully because
+  // only the document bytes were hashed and signed.
+
+  it('rejects a proof whose verificationMethod was swapped post-signing', () => {
+    const keys = generateKeyPair();
+    const did = createSelfDid(keys.publicKeyMultibase);
+    const doc = { id: did, name: 'Test Document' };
+
+    const proof = createProof(doc, keys.privateKeyBytes, `${did}#key-0`, 'assertionMethod');
+    const tamperedProof = { ...proof, verificationMethod: `${did}#key-9` };
+
+    assert.ok(!verifyProof(doc, tamperedProof, keys.publicKeyBytes));
+  });
+
+  it('rejects a proof whose created timestamp was swapped post-signing', () => {
+    const keys = generateKeyPair();
+    const did = createSelfDid(keys.publicKeyMultibase);
+    const doc = { id: did, name: 'Test Document' };
+
+    const proof = createProof(doc, keys.privateKeyBytes, `${did}#key-0`, 'assertionMethod');
+    const tamperedProof = { ...proof, created: '2000-01-01T00:00:00.000Z' };
+
+    assert.ok(!verifyProof(doc, tamperedProof, keys.publicKeyBytes));
+  });
+
+  it('rejects a proof whose proofPurpose was swapped post-signing', () => {
+    const keys = generateKeyPair();
+    const did = createSelfDid(keys.publicKeyMultibase);
+    const doc = { id: did, name: 'Test Document' };
+
+    const proof = createProof(doc, keys.privateKeyBytes, `${did}#key-0`, 'assertionMethod');
+    const tamperedProof = { ...proof, proofPurpose: 'capabilityInvocation' };
+
+    assert.ok(!verifyProof(doc, tamperedProof, keys.publicKeyBytes));
+  });
+
+  it('signs proof-config and document as separate concatenated hashes (proofConfigHash || documentHash)', () => {
+    const keys = generateKeyPair();
+    const did = createSelfDid(keys.publicKeyMultibase);
+    const doc = { id: did, name: 'Hash order check' };
+
+    const proof = createProof(doc, keys.privateKeyBytes, `${did}#key-0`, 'assertionMethod');
+    const { proofValue, ...proofConfig } = proof;
+
+    const proofConfigHash = createHash('sha256').update(jcsCanonicalizeToBuffer(proofConfig)).digest();
+    const documentHash = createHash('sha256').update(jcsCanonicalizeToBuffer(doc)).digest();
+    const hashData = Buffer.concat([proofConfigHash, documentHash]);
+
+    const signature = decodeMultibase(proofValue);
+    const { verify } = require('node:crypto') as typeof import('node:crypto');
+    const { createPublicKeyObject } = require('../src/keygen') as typeof import('../src/keygen');
+    const publicKey = createPublicKeyObject(keys.publicKeyBytes);
+
+    assert.ok(verify(null, hashData, publicKey, Buffer.from(signature)));
+    // Concatenation order is normative: swapping it must NOT verify.
+    const swapped = Buffer.concat([documentHash, proofConfigHash]);
+    assert.ok(!verify(null, swapped, publicKey, Buffer.from(signature)));
   });
 });
 

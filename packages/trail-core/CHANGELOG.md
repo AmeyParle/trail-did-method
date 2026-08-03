@@ -1,0 +1,62 @@
+# Changelog
+
+All notable changes to `@trailprotocol/core` are documented in this file.
+
+## 0.3.0
+
+**eddsa-jcs-2023 W3C conformance fix.**
+
+### Fixed
+
+- `createProof()` / `verifyProof()` (`src/proof.ts`) now implement the
+  cryptosuite's mandated hashing algorithm instead of signing the
+  canonicalized document alone. Per the W3C Data Integrity EdDSA cryptosuite
+  algorithm for JCS-based suites (Transformation, Proof Configuration, and
+  Hashing steps — the same family `eddsa-jcs-2023` belongs to; see
+  `spec/did-method-trail-v1.md` §8.2 for the suite's normative registration
+  in this specification), the bytes that get signed are:
+
+  ```
+  hashData = sha256(JCS(proofConfig)) || sha256(JCS(documentWithoutProof))
+  ```
+
+  where `proofConfig` is every proof field except `proofValue` (`type`,
+  `cryptosuite`, `created`, `verificationMethod`, `proofPurpose`),
+  canonicalized and hashed independently, then concatenated
+  (proof-config hash first) with the document hash before signing.
+
+  Previously, `createProof()` signed `JCS(document)` alone — the proof's own
+  metadata was never part of what got hashed and signed. That meant
+  `verificationMethod`, `created`, `proofPurpose`, and `cryptosuite` on an
+  already-signed proof could be swapped out post-signing without breaking
+  signature verification, since `verifyProof()` never checked them against
+  anything the signature actually covered. This is now closed: any mutation
+  to those fields changes `proofConfigHash` and therefore `hashData`, so the
+  signature no longer verifies. See `test/roundtrip.test.ts` (`DataIntegrityProof`
+  describe block) for regression tests pinning this down.
+
+- No change to the JCS canonicalization algorithm itself (`src/jcs.ts`,
+  RFC 8785) — that was already conformant per the §14.4/§14.5 test vectors.
+  This release adds executable tests asserting `jcs.ts` output
+  matches those spec test vectors byte-for-byte (previously only documented
+  as prose in the spec appendix, not exercised by the test suite).
+
+### Compatibility
+
+- Breaking for byte-level signature compatibility: proofs created with
+  0.2.0 and earlier will **not** verify under 0.3.0's `verifyProof()` (the
+  signed byte sequence changed), and proofs created with 0.3.0 will not
+  verify under 0.2.0's `verifyProof()`. There is no persisted TRAIL
+  production data signed under the old scheme to migrate — this closes a
+  conformance gap before any external verifier depends on the old,
+  non-conformant byte sequence.
+- No change to the `DataIntegrityProof` TypeScript type, the `cryptosuite`
+  identifier (`eddsa-jcs-2023`), multibase/multikey encoding, or any public
+  function signature in `src/proof.ts`. Callers do not need code changes.
+- Deliberate scope decision: the proof configuration does **not** echo the
+  document's `@context` (a nuance of the full W3C algorithm that mainly
+  matters for JSON-LD/RDF dataset canonicalization suites). This
+  implementation canonicalizes documents as plain JSON via JCS, not as RDF
+  datasets, and `DataIntegrityProof` has no `@context` field — adding one
+  would be a type/shape change, which is out of scope for a conformance
+  patch release. Flagged here for visibility, not acted on.
