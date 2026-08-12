@@ -1,6 +1,8 @@
 import { describe, it } from 'node:test';
 import * as assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { generateKeyPair } from '../src/keygen';
 import { createSelfDid, createOrgDid, createAgentDid, parseTrailDid } from '../src/did';
 import { createDidDocument, rotateKey, SPEC_VERSION } from '../src/document';
@@ -9,7 +11,7 @@ import { createProof, verifyProof, isSupportedCryptosuite, DEFAULT_CRYPTOSUITE }
 import { SUPPORTED_CRYPTOSUITES } from '../src/types';
 import { createSelfSignedCredential, verifyCredential, createBindingProofCredential, verifyBindingProof } from '../src/credential';
 import type { VerifyBindingProofInput } from '../src/credential';
-import type { DidDocument, StatusList2021Entry } from '../src/types';
+import type { DidDocument, StatusList2021Entry, BindingProofCredential } from '../src/types';
 import { encode, decode, encodeMultibase, decodeMultibase } from '../src/base58';
 import { jcsCanonicalizeToString, jcsCanonicalizeToBuffer } from '../src/jcs';
 
@@ -890,4 +892,79 @@ describe('BindingProofCredential (§5.4.5)', () => {
     // Cryptographically verified — this is exactly the §5.4.5.4 limitation.
     assert.strictEqual(result.verified, true);
   });
+});
+
+describe('Signed test vectors (validation/fixtures)', () => {
+  // These fixtures are the cross-implementation contract for §5.4.5: they carry
+  // real Ed25519 signatures produced by this package. Loading them here means a
+  // change to the signing or canonicalization path (as in 0.3.0) fails loudly
+  // instead of leaving stale vectors on disk that nothing executes.
+  const FIXTURE_DIR = join(__dirname, '..', '..', '..', '..', 'validation', 'fixtures');
+
+  interface BindingFixture {
+    trailPublicKeyBase64: string;
+    foreignPublicKeyBase64: string;
+    verificationTime: string;
+    trailDidDocument: DidDocument;
+    foreignDidDocument: DidDocument;
+    trailCredential: BindingProofCredential;
+    foreignCredential: BindingProofCredential;
+    callerRevocationInput?: VerifyBindingProofInput['revocation'];
+    callerKeyRevocationInput?: VerifyBindingProofInput['keyRevocation'];
+  }
+
+  function loadFixture(name: string): BindingFixture {
+    return JSON.parse(readFileSync(join(FIXTURE_DIR, name), 'utf8')) as BindingFixture;
+  }
+
+  function keyBytes(b64: string): Uint8Array {
+    return new Uint8Array(Buffer.from(b64, 'base64'));
+  }
+
+  function inputFor(fx: BindingFixture): VerifyBindingProofInput {
+    return {
+      trailCredential: fx.trailCredential,
+      foreignCredential: fx.foreignCredential,
+      trailDidDocument: fx.trailDidDocument,
+      foreignDidDocument: fx.foreignDidDocument,
+      trailPublicKeyBytes: keyBytes(fx.trailPublicKeyBase64),
+      foreignPublicKeyBytes: keyBytes(fx.foreignPublicKeyBase64),
+      revocation: fx.callerRevocationInput ?? {
+        trailCredentialRevoked: false,
+        foreignCredentialRevoked: false,
+      },
+      keyRevocation: fx.callerKeyRevocationInput,
+      now: fx.verificationTime,
+    };
+  }
+
+  it('valid-binding-proof-pair verifies', () => {
+    const result = verifyBindingProof(inputFor(loadFixture('valid-binding-proof-pair.json')));
+    assert.deepStrictEqual(result.errors, []);
+    assert.strictEqual(result.verified, true);
+  });
+
+  // Each invalid vector MUST fail on exactly one verification step. Asserting
+  // isolation (not just "verified === false") is what makes these vectors useful
+  // to downstream implementers — and what catches signature-path regressions,
+  // which surface as an extra Step 4 error alongside the intended one.
+  const invalidVectors: Array<[string, string]> = [
+    ['invalid-binding-proof-bad-signature.json', 'Step 4'],
+    ['invalid-binding-proof-expired.json', 'Step 6'],
+    ['invalid-binding-proof-missing-reciprocal.json', 'Step 1'],
+    ['invalid-binding-proof-credential-revoked.json', 'Step 7'],
+    ['invalid-binding-proof-signing-key-revoked.json', 'Step 5'],
+  ];
+
+  for (const [file, step] of invalidVectors) {
+    it(`${file} fails ${step} and only ${step}`, () => {
+      const result = verifyBindingProof(inputFor(loadFixture(file)));
+      assert.strictEqual(result.verified, false);
+      assert.ok(result.errors.length > 0, 'expected at least one error');
+      assert.ok(
+        result.errors.every(e => e.startsWith(step)),
+        `expected only ${step} errors, got: ${JSON.stringify(result.errors)}`
+      );
+    });
+  }
 });

@@ -1,30 +1,32 @@
 {
-  "_comment": "Test vectors for BindingProofCredential (§5.4.5). Public keys are base64(raw 32-byte Ed25519) so verifiers can check the signatures. Private keys intentionally omitted.",
-  "trailPublicKeyBase64": "TInNUpvZBwVJL2DJ9On2nUd1Ntrb1lN9tHQHdAKcnBo=",
-  "foreignPublicKeyBase64": "DDEI6DMMWDfHs9x4ACNGe9TY9kZbRL/yAwq7d/PLYbo=",
+  "_comment": "Valid reciprocal BindingProofCredential pair (§5.4.5). Both legs verify; both DID Documents carry reciprocal alsoKnownAs. verifyBindingProof(...).verified === true.",
+  "_signedWith": "@trailprotocol/core 0.3.0 (eddsa-jcs-2023: hashData = sha256(JCS(proofConfig)) || sha256(JCS(document)))",
+  "trailPublicKeyBase64": "SynvIhRTHeNWo58j2avF2DMPgT4uoGsYadERPLytJbc=",
+  "foreignPublicKeyBase64": "wTZ+Nedizm38eZNLqXedQD70SpOe843PAy4qyWWbg/k=",
+  "verificationTime": "2026-09-01T00:00:00Z",
   "trailDidDocument": {
     "@context": [
       "https://www.w3.org/ns/did/v1",
       "https://trailprotocol.org/ns/did/v1"
     ],
-    "id": "did:trail:org:acme-corp-eu-94b549601e80458e",
+    "id": "did:trail:org:acme-corp-eu-92654a83e9897e53",
     "verificationMethod": [
       {
-        "id": "did:trail:org:acme-corp-eu-94b549601e80458e#key-1",
+        "id": "did:trail:org:acme-corp-eu-92654a83e9897e53#key-1",
         "type": "JsonWebKey2020",
-        "controller": "did:trail:org:acme-corp-eu-94b549601e80458e",
+        "controller": "did:trail:org:acme-corp-eu-92654a83e9897e53",
         "publicKeyJwk": {
           "kty": "OKP",
           "crv": "Ed25519",
-          "x": "TInNUpvZBwVJL2DJ9On2nUd1Ntrb1lN9tHQHdAKcnBo"
+          "x": "SynvIhRTHeNWo58j2avF2DMPgT4uoGsYadERPLytJbc"
         }
       }
     ],
     "authentication": [
-      "did:trail:org:acme-corp-eu-94b549601e80458e#key-1"
+      "did:trail:org:acme-corp-eu-92654a83e9897e53#key-1"
     ],
     "assertionMethod": [
-      "did:trail:org:acme-corp-eu-94b549601e80458e#key-1"
+      "did:trail:org:acme-corp-eu-92654a83e9897e53#key-1"
     ],
     "trail:trailMode": "org",
     "trail:supportedCryptosuites": [
@@ -33,13 +35,13 @@
     "trail:specVersion": "1.1.0",
     "service": [
       {
-        "id": "did:trail:org:acme-corp-eu-94b549601e80458e#trail-registry",
+        "id": "did:trail:org:acme-corp-eu-92654a83e9897e53#trail-registry",
         "type": "TrailRegistryService",
-        "serviceEndpoint": "https://registry.trailprotocol.org/1.0/identifiers/did:trail:org:acme-corp-eu-94b549601e80458e"
+        "serviceEndpoint": "https://registry.trailprotocol.org/1.0/identifiers/did:trail:org:acme-corp-eu-92654a83e9897e53"
       }
     ],
     "alsoKnownAs": [
-      "did:trail:org:acme-web-agent-1b2641281557b5c4"
+      "did:trail:org:acme-web-agent-adbcdc48962b9bcf"
     ]
   },
   "foreignDidDocument": {
@@ -47,24 +49,24 @@
       "https://www.w3.org/ns/did/v1",
       "https://trailprotocol.org/ns/did/v1"
     ],
-    "id": "did:trail:org:acme-web-agent-1b2641281557b5c4",
+    "id": "did:trail:org:acme-web-agent-adbcdc48962b9bcf",
     "verificationMethod": [
       {
-        "id": "did:trail:org:acme-web-agent-1b2641281557b5c4#key-1",
+        "id": "did:trail:org:acme-web-agent-adbcdc48962b9bcf#key-1",
         "type": "JsonWebKey2020",
-        "controller": "did:trail:org:acme-web-agent-1b2641281557b5c4",
+        "controller": "did:trail:org:acme-web-agent-adbcdc48962b9bcf",
         "publicKeyJwk": {
           "kty": "OKP",
           "crv": "Ed25519",
-          "x": "DDEI6DMMWDfHs9x4ACNGe9TY9kZbRL_yAwq7d_PLYbo"
+          "x": "wTZ-Nedizm38eZNLqXedQD70SpOe843PAy4qyWWbg_k"
         }
       }
     ],
     "authentication": [
-      "did:trail:org:acme-web-agent-1b2641281557b5c4#key-1"
+      "did:trail:org:acme-web-agent-adbcdc48962b9bcf#key-1"
     ],
     "assertionMethod": [
-      "did:trail:org:acme-web-agent-1b2641281557b5c4#key-1"
+      "did:trail:org:acme-web-agent-adbcdc48962b9bcf#key-1"
     ],
     "trail:trailMode": "org",
     "trail:supportedCryptosuites": [
@@ -73,13 +75,13 @@
     "trail:specVersion": "1.1.0",
     "service": [
       {
-        "id": "did:trail:org:acme-web-agent-1b2641281557b5c4#trail-registry",
+        "id": "did:trail:org:acme-web-agent-adbcdc48962b9bcf#trail-registry",
         "type": "TrailRegistryService",
-        "serviceEndpoint": "https://registry.trailprotocol.org/1.0/identifiers/did:trail:org:acme-web-agent-1b2641281557b5c4"
+        "serviceEndpoint": "https://registry.trailprotocol.org/1.0/identifiers/did:trail:org:acme-web-agent-adbcdc48962b9bcf"
       }
     ],
     "alsoKnownAs": [
-      "did:trail:org:acme-corp-eu-94b549601e80458e"
+      "did:trail:org:acme-corp-eu-92654a83e9897e53"
     ]
   },
   "trailCredential": {
@@ -91,14 +93,14 @@
       "VerifiableCredential",
       "BindingProofCredential"
     ],
-    "issuer": "did:trail:org:acme-corp-eu-94b549601e80458e",
+    "issuer": "did:trail:org:acme-corp-eu-92654a83e9897e53",
     "validFrom": "2026-06-15T00:00:00Z",
     "validUntil": "2027-06-15T00:00:00Z",
     "credentialSubject": {
-      "id": "did:trail:org:acme-web-agent-1b2641281557b5c4",
+      "id": "did:trail:org:acme-web-agent-adbcdc48962b9bcf",
       "binding": {
-        "from": "did:trail:org:acme-corp-eu-94b549601e80458e",
-        "to": "did:trail:org:acme-web-agent-1b2641281557b5c4",
+        "from": "did:trail:org:acme-corp-eu-92654a83e9897e53",
+        "to": "did:trail:org:acme-web-agent-adbcdc48962b9bcf",
         "boundAt": "2026-06-15T00:00:00Z"
       }
     },
@@ -112,10 +114,10 @@
     "proof": {
       "type": "DataIntegrityProof",
       "cryptosuite": "eddsa-jcs-2023",
-      "created": "2026-07-01T05:12:08.263Z",
-      "verificationMethod": "did:trail:org:acme-corp-eu-94b549601e80458e#key-1",
+      "created": "2026-08-04T16:03:45.509Z",
+      "verificationMethod": "did:trail:org:acme-corp-eu-92654a83e9897e53#key-1",
       "proofPurpose": "assertionMethod",
-      "proofValue": "z4bDpw98vxFdrLc9WteaeHEeKckyZ3Kkvbapi7C585Ypm439WJwYnFLa3LzCNJzeSb1CBkTiUYwJPB61iN4nt7fUG"
+      "proofValue": "zdfJ26NXBHsmdGE6vXaNuv1WL3JgMC3vUzkn4zmS2whaWnobxe43nPR349Q1pdJ4NcvyCHsmakBJyge3E3R8m7De"
     }
   },
   "foreignCredential": {
@@ -127,14 +129,14 @@
       "VerifiableCredential",
       "BindingProofCredential"
     ],
-    "issuer": "did:trail:org:acme-web-agent-1b2641281557b5c4",
+    "issuer": "did:trail:org:acme-web-agent-adbcdc48962b9bcf",
     "validFrom": "2026-06-15T00:00:00Z",
     "validUntil": "2027-06-15T00:00:00Z",
     "credentialSubject": {
-      "id": "did:trail:org:acme-corp-eu-94b549601e80458e",
+      "id": "did:trail:org:acme-corp-eu-92654a83e9897e53",
       "binding": {
-        "from": "did:trail:org:acme-web-agent-1b2641281557b5c4",
-        "to": "did:trail:org:acme-corp-eu-94b549601e80458e",
+        "from": "did:trail:org:acme-web-agent-adbcdc48962b9bcf",
+        "to": "did:trail:org:acme-corp-eu-92654a83e9897e53",
         "boundAt": "2026-06-15T00:00:00Z"
       }
     },
@@ -148,10 +150,10 @@
     "proof": {
       "type": "DataIntegrityProof",
       "cryptosuite": "eddsa-jcs-2023",
-      "created": "2026-07-01T05:12:08.264Z",
-      "verificationMethod": "did:trail:org:acme-web-agent-1b2641281557b5c4#key-1",
+      "created": "2026-08-04T16:03:45.538Z",
+      "verificationMethod": "did:trail:org:acme-web-agent-adbcdc48962b9bcf#key-1",
       "proofPurpose": "assertionMethod",
-      "proofValue": "z2e77TZyH2KWKrTuPEZrcVPHdCucRz2DeNSW1MZ5ZnuWSR99iUiVHMA7swSRgucjRou3teqZ3CeWBTaeLf4bLj1Kr"
+      "proofValue": "z29hN31VuvSmuFRUoDtbNw8FHm7ivuWjCfENAUCy8eQCkMTHVdW4HmmvYXkxJ9edxTqKRn9s94HdaLm32y6if6nap"
     }
   }
 }
