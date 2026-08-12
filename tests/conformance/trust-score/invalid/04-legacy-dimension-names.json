@@ -1,0 +1,19 @@
+{
+  "scope": "trust-score",
+  "section": "§7.3.1 dimension names are normative",
+  "expected": "invalid",
+  "description": "Regression guard. These are the dimension names an earlier revision of this harness validated against: D2 'credential_validity', D4 'governance_compliance' and D5 'operational_history' are not renamed versions of the spec dimensions but different ones (§7.3.1 defines trackRecord, behavioralConsistency and thirdPartyAttestations). That model also derived four tiers from the score, where §7.2 defines three from the verification level. Because nothing executed the harness, the drift went unnoticed. Keeping this vector means it cannot silently return.",
+  "input": {
+    "trailTrustTier": 1,
+    "dimensions": {
+      "D1_identity_verification": 100,
+      "D2_credential_validity": 100,
+      "D3_information_provenance": 100,
+      "D4_governance_compliance": 100,
+      "D5_operational_history": 100
+    },
+    "ageDays": 365,
+    "verifiedInteractions": 500,
+    "anomalyContributions": []
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "scope": "trust-score",
+  "section": "§7.3.2 integer representation, §14.5 numeric constraint",
+  "expected": "invalid",
+  "description": "Fractional dimension scores on the old 0.0-1.0 scale. Since §7.3.2 requires published trust score values to be integers on 0-100, and §14.5 forbids fractional numbers in payloads canonicalized for signing (the Registry signs all resolution responses per §8.3), these values MUST be rejected. Note that 0.95 was additionally unreachable even on the old scale: D1 is a sum of binary components of 0.4/0.3/0.2/0.1 and therefore only ever a multiple of 0.1.",
+  "input": {
+    "trailTrustTier": 1,
+    "dimensions": {
+      "identityVerification": 0.95,
+      "trackRecord": 0.9,
+      "informationProvenance": 0.8,
+      "behavioralConsistency": 0.82,
+      "thirdPartyAttestations": 0.7
+    },
+    "ageDays": 365,
+    "verifiedInteractions": 500,
+    "anomalyContributions": []
+  }
+}

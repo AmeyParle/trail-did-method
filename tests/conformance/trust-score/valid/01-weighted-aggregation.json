@@ -1,0 +1,24 @@
+{
+  "scope": "trust-score",
+  "section": "§7.3.1 dimension weights, §7.3.2 aggregation and rounding",
+  "expected": "valid",
+  "description": "Baseline weighted aggregation for the DID whose raw inputs appear in §7.3.4. Dimension scores are the published integers derived from those inputs. Sum(wi x di) = 25*100 + 25*99 + 20*80 + 20*82 + 10*74 = 8955, divided by 100 gives 89.55; the DID is mature (m = 1), out of probation and free of anomalies, so half-up rounding yields 90. Aggregating from the PUBLISHED integers rather than the unrounded ratios is what makes this reproducible by a verifier reading §7.3.3 metadata.",
+  "input": {
+    "trailTrustTier": 1,
+    "dimensions": {
+      "identityVerification": 100,
+      "trackRecord": 99,
+      "informationProvenance": 80,
+      "behavioralConsistency": 82,
+      "thirdPartyAttestations": 74
+    },
+    "ageDays": 365,
+    "verifiedInteractions": 500,
+    "anomalyContributions": []
+  },
+  "expectedRawScore": 89.55,
+  "expectedMaturityMultiplier": 100,
+  "expectedProbationaryCap": null,
+  "expectedAnomalyFlag": false,
+  "expectedEffectiveScore": 90
+}

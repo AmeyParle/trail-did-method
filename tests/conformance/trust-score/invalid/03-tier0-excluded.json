@@ -1,0 +1,19 @@
+{
+  "scope": "trust-score",
+  "section": "§7.3.10 Tier 0 exclusion, §7.2 Tier 0",
+  "expected": "invalid",
+  "description": "A self-signed Tier 0 DID carrying a trust score. Per §7.3.10, Tier 0 DIDs do not participate in the trust score system at all, because there is no registry to collect or compute scores. Producing a score for a Tier 0 subject MUST be rejected. This also guards the tier model: §7.2 defines exactly three tiers (0 self-signed, 1 registry-backed, 2 audited), derived from the verification level rather than from the score.",
+  "input": {
+    "trailTrustTier": 0,
+    "dimensions": {
+      "identityVerification": 40,
+      "trackRecord": 50,
+      "informationProvenance": 50,
+      "behavioralConsistency": 50,
+      "thirdPartyAttestations": 0
+    },
+    "ageDays": 365,
+    "verifiedInteractions": 500,
+    "anomalyContributions": []
+  }
+}

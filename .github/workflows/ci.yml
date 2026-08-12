@@ -32,3 +32,21 @@ jobs:
       - name: Run tests
         working-directory: packages/trail-core
         run: node --test dist/test/roundtrip.test.js
+
+  # The conformance harness validates the specification independently of the
+  # implementation and uses Node built-ins only. It runs as its own job, without
+  # an install or build step, so that the dependency-free property is enforced
+  # mechanically: introducing a dependency into the harness breaks this job.
+  conformance:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run conformance harness
+        run: node tests/conformance/harness.mjs

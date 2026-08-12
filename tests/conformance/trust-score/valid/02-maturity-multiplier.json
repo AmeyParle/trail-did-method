@@ -1,0 +1,24 @@
+{
+  "scope": "trust-score",
+  "section": "§7.3.8 Maturity Multiplier",
+  "expected": "valid",
+  "description": "Perfect dimension scores cannot reach 100 before the DID is 180 days old. At 90 days m = min(1, 90/180) = 0.5, halving an otherwise perfect raw score of 100 to 50. The DID has already exited probation (200 verified interactions, 90 days), so maturity is the only limiter. Per §7.3.8 the multiplier is published as an integer percentage, here 50.",
+  "input": {
+    "trailTrustTier": 1,
+    "dimensions": {
+      "identityVerification": 100,
+      "trackRecord": 100,
+      "informationProvenance": 100,
+      "behavioralConsistency": 100,
+      "thirdPartyAttestations": 100
+    },
+    "ageDays": 90,
+    "verifiedInteractions": 200,
+    "anomalyContributions": []
+  },
+  "expectedRawScore": 100,
+  "expectedMaturityMultiplier": 50,
+  "expectedProbationaryCap": null,
+  "expectedAnomalyFlag": false,
+  "expectedEffectiveScore": 50
+}

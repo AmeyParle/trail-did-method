@@ -10,8 +10,8 @@ implementers verify that their `did:trail` implementation matches the
 |-----------|--------------|----------------|
 | `did-creation/` | §4 (DID Method Syntax), §4.5 (Identifier Normalization) | DID syntax, slug normalization, 16-hex `trail-hash` derivation |
 | `did-resolution/` | §6.2 (Read/Resolve) | Resolution result envelope, `@context` ordering, error codes |
-| `revocation/` | §7.3 (Revocation) | `BitstringStatusListEntry` shape, `statusPurpose` enum, bit semantics (0=active, 1=revoked) |
-| `trust-score/` | §7.3 (Trust Score), §3.4 (Trust Anchor Tiers) | D1–D5 averaging, tier mapping (root/sub/endorsement/self) |
+| `revocation/` | §8.7 (Status List) | `BitstringStatusListEntry` shape, `statusPurpose` enum, bit semantics (0=active, 1=revoked) |
+| `trust-score/` | §7.3 (Trust Score), §7.2.5 (Probationary Tier) | Weighted aggregation over the five §7.3.1 dimensions, maturity multiplier, anomaly penalty and flag threshold, probationary cap |
 
 ## Layout
 
@@ -24,6 +24,24 @@ tests/conformance/
 ├── revocation/{valid,invalid}/
 └── trust-score/{valid,invalid}/
 ```
+
+### Relationship to `validation/fixtures/`
+
+The repository holds test vectors in two places. The split is deliberate:
+
+| | `tests/conformance/` (this directory) | `validation/fixtures/` |
+|---|---|---|
+| **Purpose** | Spec vectors — check that an implementation follows the normative rules | Implementation vectors — check that `trail-core` produces and verifies real artifacts |
+| **What it needs** | Nothing but Node built-ins | Signature verification, therefore a crypto implementation |
+| **Runner** | `harness.mjs`, which reimplements the spec rules independently | The `trail-core` test suite, which exercises the library itself |
+| **Layout** | `<scope>/{valid,invalid}/` | flat |
+
+The separation is the point: the harness validates the specification *without*
+importing `trail-core`, so an implementation bug cannot make the conformance
+suite agree with it. Anything requiring signature verification belongs in
+`validation/fixtures/` and the implementation suite, not here — putting it here
+would mean importing `trail-core` (losing that independence) or reimplementing
+JCS and Ed25519 inside the harness.
 
 Each vector is a single JSON file with at least:
 
@@ -83,16 +101,39 @@ spec:
   16-hex truncation, regex-validated DID string.
 - **DID resolution** — `@context` array shape, `verificationMethod` cardinality,
   resolution metadata `contentType`.
-- **Revocation** — required fields enumerated in §7.3,
+- **Revocation** — required fields enumerated in §8.7,
   `statusPurpose ∈ {revocation, suspension}`, bit-at-index → revoked boolean.
-- **Trust Score** — unweighted average of D1–D5, range check `[0, 100]`,
-  tier thresholds 90 / 70 / 50.
+- **Trust Score** — the §7.3.2 aggregation pipeline in full:
+  `S_raw = Σ(wi × di) / 100` over the five §7.3.1 dimensions with the normative
+  integer weights (25 / 25 / 20 / 20 / 10), the §7.3.8 maturity multiplier
+  `m = min(1, age_days / 180)`, the §7.3.7 anomaly penalty `p = min(1, Σ contributions)`
+  with the `p ≥ 0.5` flagging threshold, and the §7.2.5 probationary cap
+  `round(50 + 50 × min(1, verified_interactions / 100))`, which lifts only when the
+  DID has both ≥ 100 verified interactions and ≥ 30 days of age. Dimension scores
+  are range-checked on `[0, 100]`, required to be integers, and the §7.3.1 dimension
+  names are treated as normative. Per §7.3.10, Tier 0 DIDs do not participate in the
+  trust score system, so a Tier 0 subject carrying a score is rejected.
+
+  Published trust score values are integers on 0–100 (§7.3.2, following the §14.5
+  numeric constraint). Aggregation runs over the **published** integer dimension
+  scores, not the unrounded ratios, so a verifier recomputing from §7.3.3 metadata
+  reproduces the published `overall` exactly; only the maturity and anomaly
+  multiplication is carried at full precision and rounded half-up once at the end.
 
 ## Spec-Versions Notes
 
-These vectors target spec **v1.2.0** (current draft). If you find a vector that
+These vectors target spec **v1.3.0-draft** (current). If you find a vector that
 disagrees with a published normative statement of the spec, please open an
 issue — the spec is authoritative, the suite is illustrative.
+
+The trust score moved from a 0.0–1.0 fraction to an integer on 0–100 in
+v1.3.0-draft. Three arithmetic defects in the examples were fixed in the same
+change, all of them surfaced by this harness once it was reconciled with §7.3 and
+put under CI: `overall: 0.87` was not reachable from the dimension scores shown
+beside it, `identityVerification: 0.95` was not reachable from the D1 formula at
+all, and the §7.2.5 probationary example showed a cap its own formula does not
+produce. `trust-score/invalid/05-fractional-dimension.json` keeps the old
+fractional shape as a rejection case.
 
 ## Adding New Vectors
 

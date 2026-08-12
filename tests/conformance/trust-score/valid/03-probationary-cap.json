@@ -1,0 +1,24 @@
+{
+  "scope": "trust-score",
+  "section": "§7.2.5 Probationary Tier",
+  "expected": "valid",
+  "description": "A mature DID (200 days, m = 1) with perfect dimension scores is still capped while in probation. Probation lifts only when verified_interactions >= 100 AND age_days >= 30; here the age condition is met but only 40 interactions are recorded. cap = round(50 + 50 x min(1, 40/100)) = 70, so effective = min(100, 70) = 70. This is the trust-laundering guard: age alone does not lift the cap.",
+  "input": {
+    "trailTrustTier": 1,
+    "dimensions": {
+      "identityVerification": 100,
+      "trackRecord": 100,
+      "informationProvenance": 100,
+      "behavioralConsistency": 100,
+      "thirdPartyAttestations": 100
+    },
+    "ageDays": 200,
+    "verifiedInteractions": 40,
+    "anomalyContributions": []
+  },
+  "expectedRawScore": 100,
+  "expectedMaturityMultiplier": 100,
+  "expectedProbationaryCap": 70,
+  "expectedAnomalyFlag": false,
+  "expectedEffectiveScore": 70
+}

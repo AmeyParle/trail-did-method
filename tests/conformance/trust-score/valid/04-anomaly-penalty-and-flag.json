@@ -1,0 +1,27 @@
+{
+  "scope": "trust-score",
+  "section": "§7.3.7 Anomaly Penalties",
+  "expected": "valid",
+  "description": "Two rule-based detectors fire on a mature, out-of-probation DID with perfect dimension scores: A1 circular endorsement (+0.30) and A2 cluster collusion (+0.40). p = min(1, 0.70) = 0.70, so S = round(100 x 1 x 0.30) = 30. Because p >= 0.5 the DID MUST additionally carry anomalyFlag = true in resolution metadata. Covers both the multiplicative discount and the flagging threshold.",
+  "input": {
+    "trailTrustTier": 1,
+    "dimensions": {
+      "identityVerification": 100,
+      "trackRecord": 100,
+      "informationProvenance": 100,
+      "behavioralConsistency": 100,
+      "thirdPartyAttestations": 100
+    },
+    "ageDays": 365,
+    "verifiedInteractions": 500,
+    "anomalyContributions": [
+      0.3,
+      0.4
+    ]
+  },
+  "expectedRawScore": 100,
+  "expectedMaturityMultiplier": 100,
+  "expectedProbationaryCap": null,
+  "expectedAnomalyFlag": true,
+  "expectedEffectiveScore": 30
+}
