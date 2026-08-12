@@ -2,6 +2,26 @@
 
 All notable changes to `@trailprotocol/core` are documented in this file.
 
+## Unreleased
+
+### Fixed
+
+- Regenerated the six `BindingProof` test vectors in `validation/fixtures/`
+  against the 0.3.0 hashing path. The 0.3.0 proof-config binding invalidated
+  the previously signed vectors: the valid pair no longer verified, and four
+  of the invalid vectors failed step 4 alongside their intended step, losing
+  the single-step isolation that makes them useful to implementers. Each
+  vector now records the version and construction it was signed with.
+
+- The roundtrip suite now loads those vectors from disk and asserts
+  single-step isolation rather than mere failure. Nothing previously executed
+  them, so a change to the signing algorithm could not fail anything —
+  asserting `verified === false` would have passed on the stale vectors.
+  Suite goes 67 → 73 tests.
+
+Fixtures and tests only; nothing shipped in `dist/` changed. Contributed by
+Amey Parle in [#26](https://github.com/trailprotocol/trail-did-method/pull/26).
+
 ## 0.3.0
 
 **eddsa-jcs-2023 W3C conformance fix.**
