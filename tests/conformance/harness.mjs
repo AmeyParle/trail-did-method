@@ -184,7 +184,7 @@ function checkInvalidDidResolution(v) {
 }
 
 // ============================================================================
-// §7.3 Revocation validators
+// §8.7 Revocation validators
 // ============================================================================
 
 const REQUIRED_STATUS_FIELDS = ['id', 'type', 'statusPurpose', 'statusListIndex', 'statusListCredential'];
@@ -240,46 +240,147 @@ function checkInvalidRevocation(v) {
 // §7.3 Trust Score validators
 // ============================================================================
 
-const REQUIRED_DIMENSIONS = [
-  'D1_identity_verification',
-  'D2_credential_validity',
-  'D3_information_provenance',
-  'D4_governance_compliance',
-  'D5_operational_history',
-];
+// §7.3.1 — the dimension keys and their weights are normative and fixed by the
+// spec. They are never vector inputs: a vector supplies dimension *scores*, and
+// the harness applies the spec's weights to them.
+const DIMENSION_WEIGHTS = Object.freeze({
+  identityVerification: 25,
+  trackRecord: 25,
+  informationProvenance: 20,
+  behavioralConsistency: 20,
+  thirdPartyAttestations: 10,
+});
+const REQUIRED_DIMENSIONS = Object.keys(DIMENSION_WEIGHTS);
 
-function computeTrustScore(dims) {
-  for (const d of REQUIRED_DIMENSIONS) {
-    if (!(d in dims)) throw new Error(`all five dimensions D1-D5 are REQUIRED (missing ${d})`);
-    const v = dims[d];
-    if (typeof v !== 'number' || v < 0 || v > 100) {
-      throw new Error(`dimension values MUST be in [0, 100] (${d}=${v})`);
-    }
-  }
-  const sum = REQUIRED_DIMENSIONS.reduce((acc, d) => acc + dims[d], 0);
-  return Math.round(sum / REQUIRED_DIMENSIONS.length);
+// §7.3.2 rounding rule: published trust score values are integers on 0-100,
+// rounded half-up. Math.round is half-up for the non-negative values used here.
+function roundHalfUp(x) {
+  return Math.round(x);
 }
 
-function tierFromScore(score) {
-  if (score >= 90) return 'tier-1-root';
-  if (score >= 70) return 'tier-2-sub';
-  if (score >= 50) return 'tier-3-endorsement';
-  return 'tier-4-self';
+function assertDimensions(dims) {
+  if (dims === null || typeof dims !== 'object' || Array.isArray(dims)) {
+    throw new Error('input.dimensions MUST be an object carrying the five §7.3.1 dimensions');
+  }
+  for (const d of REQUIRED_DIMENSIONS) {
+    if (!(d in dims)) {
+      throw new Error(`all five §7.3.1 dimensions are REQUIRED (missing ${d})`);
+    }
+    const value = dims[d];
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 100) {
+      throw new Error(`dimension scores MUST be in [0, 100] (${d}=${value})`);
+    }
+    // §7.3.2 / §14.5 — published scores are integers, not fractions.
+    if (!Number.isInteger(value)) {
+      throw new Error(`dimension scores MUST be integers (${d}=${value})`);
+    }
+  }
+  for (const key of Object.keys(dims)) {
+    if (!REQUIRED_DIMENSIONS.includes(key)) {
+      throw new Error(`unknown dimension key '${key}' — §7.3.1 names are normative`);
+    }
+  }
+}
+
+// §7.3.8 — m = min(1.0, age_days / 180)
+function maturityMultiplier(ageDays) {
+  if (typeof ageDays !== 'number' || !Number.isFinite(ageDays) || ageDays < 0) {
+    throw new Error(`ageDays MUST be a non-negative number (got ${ageDays})`);
+  }
+  return Math.min(1.0, ageDays / 180);
+}
+
+// §7.3.7 — p = min(1.0, Σ contributions)
+function anomalyPenalty(contributions) {
+  if (contributions === undefined) return 0;
+  if (!Array.isArray(contributions)) {
+    throw new Error('anomalyContributions MUST be an array of detector contributions');
+  }
+  let sum = 0;
+  for (const c of contributions) {
+    if (typeof c !== 'number' || !Number.isFinite(c) || c < 0) {
+      throw new Error(`anomaly contribution MUST be a non-negative number (got ${c})`);
+    }
+    sum += c;
+  }
+  return Math.min(1.0, sum);
+}
+
+// §7.2.5 — probationary_cap = 0.5 + 0.5 × min(1, verified_interactions / 100).
+// A DID exits probation only when verified_interactions >= 100 AND age_days >= 30.
+// Returns null when no cap applies.
+function probationaryCap(verifiedInteractions, ageDays) {
+  if (
+    typeof verifiedInteractions !== 'number' ||
+    !Number.isFinite(verifiedInteractions) ||
+    verifiedInteractions < 0
+  ) {
+    throw new Error(`verifiedInteractions MUST be a non-negative number (got ${verifiedInteractions})`);
+  }
+  const exited = verifiedInteractions >= 100 && ageDays >= 30;
+  if (exited) return null;
+  return roundHalfUp(50 + 50 * Math.min(1, verifiedInteractions / 100));
+}
+
+// §7.3.2 aggregation pipeline, integer representation:
+//   S_raw     = Σ(wi × di) / 100        (over the PUBLISHED integer dimensions)
+//   S         = round(S_raw × m × (1 - p))
+//   effective = min(S, probationary_cap)
+function computeTrustScore(input) {
+  assertDimensions(input.dimensions);
+  const sRaw =
+    REQUIRED_DIMENSIONS.reduce((acc, d) => acc + DIMENSION_WEIGHTS[d] * input.dimensions[d], 0) / 100;
+  const m = maturityMultiplier(input.ageDays);
+  const p = anomalyPenalty(input.anomalyContributions);
+  const s = roundHalfUp(sRaw * m * (1 - p));
+  const cap = probationaryCap(input.verifiedInteractions, input.ageDays);
+  return {
+    sRaw,
+    m,
+    p,
+    s,
+    cap,
+    effective: cap === null ? s : Math.min(s, cap),
+    // §7.3.7 — a DID with p >= 0.5 MUST be flagged in resolution metadata.
+    anomalyFlag: p >= 0.5,
+  };
 }
 
 function checkValidTrustScore(v) {
-  const score = computeTrustScore(v.input.dimensions);
-  if (score !== v.expectedScore) {
-    throw new Error(`computed score ${score} != expected ${v.expectedScore}`);
+  // §7.3.10 — Tier 0 (self-signed) DIDs do not participate in the trust score
+  // system at all, so a Tier 0 vector can never be a valid scoring case.
+  if (v.input.trailTrustTier === 0) {
+    throw new Error('Tier 0 DIDs do not participate in the trust score system (§7.3.10)');
   }
-  const tier = tierFromScore(score);
-  if (tier !== v.expectedTier) {
-    throw new Error(`computed tier ${tier} != expected ${v.expectedTier}`);
+  const r = computeTrustScore(v.input);
+
+  if (r.effective !== v.expectedEffectiveScore) {
+    throw new Error(`effective score ${r.effective} != expected ${v.expectedEffectiveScore}`);
+  }
+  if ('expectedRawScore' in v && r.sRaw !== v.expectedRawScore) {
+    throw new Error(`raw score ${r.sRaw} != expected ${v.expectedRawScore}`);
+  }
+  // §7.3.8 publishes m as an integer percentage on 0-100.
+  if ('expectedMaturityMultiplier' in v && roundHalfUp(r.m * 100) !== v.expectedMaturityMultiplier) {
+    throw new Error(`maturity multiplier ${roundHalfUp(r.m * 100)} != expected ${v.expectedMaturityMultiplier}`);
+  }
+  if ('expectedAnomalyFlag' in v && r.anomalyFlag !== v.expectedAnomalyFlag) {
+    throw new Error(`anomalyFlag ${r.anomalyFlag} != expected ${v.expectedAnomalyFlag}`);
+  }
+  if ('expectedProbationaryCap' in v) {
+    if (v.expectedProbationaryCap === null) {
+      if (r.cap !== null) throw new Error(`expected no probationary cap, got ${r.cap}`);
+    } else if (r.cap === null || r.cap !== v.expectedProbationaryCap) {
+      throw new Error(`probationary cap ${r.cap} != expected ${v.expectedProbationaryCap}`);
+    }
   }
 }
 
 function checkInvalidTrustScore(v) {
-  computeTrustScore(v.input.dimensions); // MUST throw
+  if (v.input.trailTrustTier === 0) {
+    throw new Error('Tier 0 DIDs do not participate in the trust score system (correctly rejected)');
+  }
+  computeTrustScore(v.input); // MUST throw
 }
 
 // ============================================================================

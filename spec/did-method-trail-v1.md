@@ -851,13 +851,13 @@ Accept: application/did+ld+json
     "trailCertificationStatus": "active",
     "trailTrustTier": 1,
     "trailTrustScore": {
-      "overall": 0.87,
+      "overall": 90,
       "dimensions": {
-        "identityVerification": { "score": 0.95, "weight": 0.25 },
-        "trackRecord": { "score": 0.90, "weight": 0.25 },
-        "informationProvenance": { "score": 0.80, "weight": 0.20 },
-        "behavioralConsistency": { "score": 0.82, "weight": 0.20 },
-        "thirdPartyAttestations": { "score": 0.70, "weight": 0.10 }
+        "identityVerification": { "score": 100, "weight": 25 },
+        "trackRecord": { "score": 99, "weight": 25 },
+        "informationProvenance": { "score": 80, "weight": 20 },
+        "behavioralConsistency": { "score": 82, "weight": 20 },
+        "thirdPartyAttestations": { "score": 74, "weight": 10 }
       },
       "lastComputed": "2026-03-01T00:00:00Z"
     },
@@ -1059,13 +1059,13 @@ The TRAIL Registry issues Verifiable Credentials (conforming to VC Data Model 2.
     "jurisdiction": "DE",
     "trailTrustTier": 1,
     "trailTrustScore": {
-      "overall": 0.87,
+      "overall": 90,
       "dimensions": {
-        "identityVerification": 0.95,
-        "trackRecord": 0.90,
-        "informationProvenance": 0.80,
-        "behavioralConsistency": 0.82,
-        "thirdPartyAttestations": 0.70
+        "identityVerification": 100,
+        "trackRecord": 99,
+        "informationProvenance": 80,
+        "behavioralConsistency": 82,
+        "thirdPartyAttestations": 74
       }
     },
     "certificationLevel": "standard"
@@ -1132,9 +1132,11 @@ New DIDs registered in the TRAIL ecosystem MUST enter a **probationary state** b
 - While in probationary state, the effective Trust Score is **capped** independent of the raw computed value:
 
   ```
-  effective_score = min(computed_score, probationary_cap)
-  probationary_cap = 0.5 + 0.5 × min(1, verified_interactions / 100)
+  effective_score  = min(computed_score, probationary_cap)
+  probationary_cap = round(50 + 50 × min(1, verified_interactions / 100))
   ```
+
+  Both values are integers on 0–100, per the rounding rule in §7.3.2.
 
 - The minimum probationary duration is **30 days** from registration, regardless of interaction count.
 - A DID exits the probationary state when BOTH conditions are met:
@@ -1150,11 +1152,11 @@ Registries MUST expose the probationary state in resolution responses:
 ```json
 {
   "trailTrustScore": {
-    "overall": 0.50,
-    "computedOverall": 0.82,
+    "overall": 62,
+    "computedOverall": 82,
     "probationary": {
       "state": "probationary",
-      "cap": 0.50,
+      "cap": 62,
       "ageDays": 12,
       "verifiedInteractions": 23,
       "exitsEarliest": "2026-05-14T00:00:00Z"
@@ -1184,24 +1186,27 @@ The TRAIL Trust Score quantifies the trustworthiness of a registered identity ac
 The overall Trust Score `S` is computed as:
 
 ```
-S_raw      = Σ(wi × di) for i = 1..5
-S_mature   = m × S_raw                        // see §7.3.8 Maturity Multiplier
-S          = S_mature × (1 - p)               // see §7.3.7 Anomaly Penalties
+S_raw      = Σ(wi × di) / 100 for i = 1..5
+S          = round(S_raw × m × (1 - p))       // m: §7.3.8 · p: §7.3.7
 effective  = min(S, probationary_cap)          // see §7.2.5 Probationary Tier
 ```
 
-Where `wi` is the weight and `di` is the dimension score (0.0–1.0) for each dimension, `m` is the maturity multiplier (§7.3.8), `p` is the anomaly penalty factor (§7.3.7), and `effective` is the score verifiers MUST use for trust decisions. Per-dimension decay is defined in §7.3.9.
+Where `wi` is the integer weight from §7.3.1 (25, 25, 20, 20, 10 — summing to 100), `di` is the published integer dimension score on 0–100, `m` is the maturity multiplier (§7.3.8), `p` is the anomaly penalty factor (§7.3.7), and `effective` is the score verifiers MUST use for trust decisions. Per-dimension decay is defined in §7.3.9.
+
+> **Integer representation and rounding (normative).** Every published trust score value — the overall score, each per-dimension score, the probationary cap and the maturity multiplier — is an integer on 0–100, as required by §14.5. Each dimension is computed as an exact ratio, scaled by 100 and rounded half-up before publication. **Aggregation uses the published integer dimension scores, not the unrounded ratios**, so a verifier recomputing from the §7.3.3 metadata reproduces the published `overall` exactly; only the multiplication by `m` and `(1 - p)` is carried at full precision and rounded half-up once, at the end. Registries MUST NOT publish fractional trust score values.
 
 **Dimension Formulas:**
 
 - **D1 (Identity Verification):**
   ```
-  d1 = 0.4 (self-declared name only)
-     + 0.3 (KYB document verified)
-     + 0.2 (eIDAS-compatible identity verified)
-     + 0.1 (annual re-verification current)
+  d1 = 40 (self-declared name only)
+     + 30 (KYB document verified)
+     + 20 (eIDAS-compatible identity verified)
+     + 10 (annual re-verification current)
   ```
-  Each component is binary (0 or its value). Maximum d1 = 1.0.
+  Each component is binary (0 or its value). Maximum d1 = 100. Note that d1 is therefore always a multiple of 10; intermediate values such as 95 are not reachable.
+
+The formulas for D2–D5 below yield an exact ratio on 0.0–1.0; each is scaled by 100 and rounded half-up to the published integer score, per the rounding rule above.
 
 - **D2 (Track Record):**
   ```
@@ -1241,23 +1246,25 @@ Where `wi` is the weight and `di` is the dimension score (0.0–1.0) for each di
 
 #### 7.3.3 Score Transparency
 
-The TRAIL Registry MUST expose per-dimension scores in all resolution responses (see §6.2.1). The trust score in resolution metadata MUST be an object, not a single float:
+The TRAIL Registry MUST expose per-dimension scores in all resolution responses (see §6.2.1). The trust score in resolution metadata MUST be an object, not a single value:
 
 ```json
 {
   "trailTrustScore": {
-    "overall": 0.87,
+    "overall": 90,
     "dimensions": {
-      "identityVerification": { "score": 0.95, "weight": 0.25 },
-      "trackRecord": { "score": 0.90, "weight": 0.25 },
-      "informationProvenance": { "score": 0.80, "weight": 0.20 },
-      "behavioralConsistency": { "score": 0.82, "weight": 0.20 },
-      "thirdPartyAttestations": { "score": 0.70, "weight": 0.10 }
+      "identityVerification": { "score": 100, "weight": 25 },
+      "trackRecord": { "score": 99, "weight": 25 },
+      "informationProvenance": { "score": 80, "weight": 20 },
+      "behavioralConsistency": { "score": 82, "weight": 20 },
+      "thirdPartyAttestations": { "score": 74, "weight": 10 }
     },
     "lastComputed": "2026-03-01T00:00:00Z"
   }
 }
 ```
+
+This example is the DID whose raw inputs are shown in §7.3.4, carried through the §7.3.2 pipeline: `Σ(wi × di) = 25×100 + 25×99 + 20×80 + 20×82 + 10×74 = 8955`, divided by 100 gives `89.55`, and with `m = 1` and `p = 0` the half-up rounding yields `90`.
 
 #### 7.3.4 Verifier-Side Computation
 
@@ -1305,7 +1312,7 @@ Accept: application/json
       ]
     }
   },
-  "computedScore": 0.87,
+  "computedScore": 90,
   "computedAt": "2026-03-01T00:00:00Z"
 }
 ```
@@ -1359,7 +1366,7 @@ m = min(1.0, age_days / 180)
 
 Where `age_days` is the number of days since the DID was first registered in any TRAIL Registry. A DID that has existed for less than 180 days cannot reach a Trust Score of 1.0, even with perfect dimension scores. This complements §7.2.5 (Probationary Tier) by extending the trust-building period beyond the probationary cap exit.
 
-The maturity multiplier MUST be exposed in resolution metadata as `"maturity": { "ageDays": N, "multiplier": M }`.
+The maturity multiplier MUST be exposed in resolution metadata as `"maturity": { "ageDays": N, "multiplier": M }`, where `M` is `m` expressed as an integer percentage on 0–100 (a DID aged 90 days publishes `"multiplier": 50`). The factor `m` itself is carried at full precision inside the §7.3.2 computation; only the published value is rounded, per the rounding rule there.
 
 #### 7.3.9 Signal Decay
 
@@ -2319,9 +2326,11 @@ Numeric serialization rules (RFC 8785 Section 3.2.2.3):
 
 - Numbers are serialized using the ES2015 `Number.toString()` algorithm. A value parsed from `1.0` collapses to the integer token `1` (`JSON.parse('{"x":1.0}')` then canonicalize yields `{"x":1}`), and negative zero normalizes to `0` (`{"x":-0}` canonicalizes to `{"x":0}`). `NaN` and `Infinity` are rejected as invalid JSON.
 
-> Normative constraint: TRAIL signed payloads MUST use integer numeric values within the IEEE-754 safe integer range (|n| ≤ 2^53 − 1, i.e. `Number.MAX_SAFE_INTEGER`); fractional/exponential numbers are out of scope. Note that 2^53 itself is not a safe integer — adjacent integers become indistinguishable at that magnitude.
+> Normative constraint: TRAIL signed payloads MUST use integer numeric values within the IEEE-754 safe integer range (|n| ≤ 2^53 − 1, i.e. `Number.MAX_SAFE_INTEGER`). Fractional and exponential numbers MUST NOT appear in a payload that is canonicalized for signing. Note that 2^53 itself is not a safe integer — adjacent integers become indistinguishable at that magnitude.
 
-This removes any `1.0`-vs-`1` ambiguity at the source: because the numeric fields that appear in signed payloads (e.g. `threshold`, `trail:trailTrustTier`) are small integers, the canonical byte sequence is deterministic across conforming implementations regardless of their internal number representation.
+Rationale: restricting signed payloads to safe-range integers removes the `1.0`-vs-`1` ambiguity at the source and keeps the canonical byte sequence deterministic across conforming implementations, independently of their internal number representation. RFC 8785 does define a deterministic serialization for fractional values as well, so this constraint is stricter than RFC 8785 requires. It is deliberate: reproducing the ES2015 shortest-round-trip algorithm exactly is the most error-prone part of a JCS implementation outside JavaScript, and TRAIL would rather keep that class of divergence off the signing path than depend on every implementer getting it right.
+
+The constraint governs which *values* may enter a payload that is canonicalized for signing. It does not modify JCS itself: a conforming TRAIL implementation's canonicalization routine remains a faithful RFC 8785 implementation, and enforcement belongs at the layer where the payload is assembled for signing and verification.
 
 Verifier roundtrip conformance: A conforming verifier MUST produce identical canonical bytes after a parse/re-serialize roundtrip. Given a signed payload, the sequence `canonicalize → JSON.parse → canonicalize` MUST yield byte-identical output to the original canonicalization, and signature verification MUST still succeed. For the vector above, both the string canonicalization path and the buffer canonicalization path produce SHA-256 `db373549d7bc7aafab4c890b8ef07bff9ef28bc85a21edbcde917c2095168af0`.
 
@@ -2411,8 +2420,10 @@ This release adds normative cryptographic mutual consent to §5.4 Cross-Method B
 | 2 | **Reconciled roadmap label `BindingProofVC` → `BindingProofCredential`** in the v1.3.0 (planned) entry of §8.12, for W3C-convention consistency with `TrailIdentityCredential`. No behavioural change. | §8.12 |
 | 3 | **Added §14.5 Numeric Canonicalization and Integer Constraint** — numeric JCS (RFC 8785) test vector with computed SHA-256, the `1.0`→`1` / `-0`→`0` serialization rules, a normative integer-only constraint for signed payloads (IEEE-754 safe integer range, absolute value ≤ 2^53 − 1), and a verifier parse/re-serialize roundtrip conformance requirement. Closes the missing numeric test vector in §14.4. | §14.5 (new) |
 | 4 | **Aligned §15 example cryptosuite** `eddsa-jcs-2022` → `eddsa-jcs-2023` to match §8.2, §14, and the implementation default. Example-only fix, no normative change. | §15 |
+| 5 | **Resolved the §14.5 "out of scope" ambiguity in favour of a prohibition** — fractional and exponential numbers MUST NOT appear in a payload canonicalized for signing. The previous wording read either as forbidding them or as merely not addressing them, which led to different implementations. Replaced the rationale, which incorrectly asserted that only small integers reach signed payloads, and stated explicitly that the constraint is stricter than RFC 8785 and governs values rather than the canonicalization routine. The trust score sections were found to violate the constraint and are corrected in row 6 of this release rather than deferred. | §14.5 |
+| 6 | **Moved the trust score to an integer representation — BREAKING** — every published trust score value (overall, per-dimension `score` and `weight`, probationary cap, maturity multiplier) is now an integer on 0–100 instead of a 0.0–1.0 fraction, bringing §7.3 into conformance with the §14.5 numeric constraint. Adds a normative rounding rule: dimensions are computed as exact ratios and rounded half-up before publication, **aggregation uses the published integer dimension scores**, and only the maturity/anomaly multiplication is carried at full precision and rounded once at the end — so a verifier recomputing from §7.3.3 metadata reproduces the published `overall` exactly, closing a gap that made the §7.3.4 dispute process ill-defined. Three arithmetic defects in the examples are fixed in the same pass: `overall: 0.87` was not reachable from the dimension scores displayed beside it (weighted sum `0.8565`); `identityVerification: 0.95` was not reachable from the D1 formula at all, whose binary components only admit multiples of 0.1; and the §7.2.5 probationary example showed `cap: 0.50` where its own formula yields `0.615` for 23 verified interactions. The §7.3.3, §6.2.1 and §7.1 examples are now one coherent DID, computed from the raw inputs in §7.3.4. | §7.3.2, §7.3.3, §7.3.8, §6.2.1, §7.1, §7.2.5, §7.3.4 |
 
-Authored by Amey Parle (§5.4.5 BindingProofCredential, rows 1–2). Editorial hardening rows 3–4 (§14.5 numeric vector, §15 alignment) by the maintainer. Design discussion: [Issue #21](https://github.com/trailprotocol/trail-did-method/issues/21).
+Authored by Amey Parle (§5.4.5 BindingProofCredential, rows 1–2). Editorial hardening rows 3–4 (§14.5 numeric vector, §15 alignment) by the maintainer. Row 5 resolves an ambiguity in row 3 that Amey Parle identified, along with its consequence for the trust score sections, in [Issue #25](https://github.com/trailprotocol/trail-did-method/issues/25). Row 6 follows from it; the example arithmetic defects it fixes were surfaced by the conformance harness once that harness was reconciled with §7.3 and put under CI. Design discussion: [Issue #21](https://github.com/trailprotocol/trail-did-method/issues/21).
 
 ### v1.2.1 (2026-04-22)
 

@@ -26,8 +26,37 @@ We especially value contributors with experience in:
 - **Protocol Design** - Federation models, trust propagation, conflict resolution in distributed systems.
 - **Security & Cryptography** - EdDSA, JSON Canonicalization Scheme (JCS), key rotation, revocation mechanisms, threat modeling.
 - **AI Agent Development** - If you build with LangChain, CrewAI, AutoGen, or similar frameworks, you know the identity gaps TRAIL aims to fill.
+- **Regulated or administrative practice** - If you operate a register, issue certifications, run identity or eligibility checks, or work inside a supervisory regime, you hold knowledge this specification cannot obtain by reasoning about it. Several open sections exist precisely because that knowledge is missing.
 
-You don't need all of these. Deep expertise in any one area is valuable.
+You don't need all of these. Deep expertise in any one area is valuable, and domain practice counts as expertise.
+
+## Scope of Contributions
+
+Being explicit about scope saves everyone time.
+
+**In scope**
+
+- The `did:trail` method specification: syntax, operations, federation, trust model, credential types.
+- Roles the specification references but does not define. These are the most valuable contributions available, because they need practitioner knowledge rather than protocol knowledge.
+- Security analysis, threat models, and concrete attacks against the specification as written.
+- Reference implementation (`packages/trail-core`): conformance to the specification, test vectors, interoperability fixes.
+- Interoperability with other identifier methods and credential ecosystems.
+
+**Out of scope**
+
+- A policy or authorization language. TRAIL supplies verifiable input to an authorization decision; enforcement stays with the verifier. This is a deliberate boundary, not an oversight.
+- Registry operator business terms, pricing, or commercial arrangements.
+- Recognition of any credential, register, or authority in a given legal system. The specification does not and cannot confer legal effect.
+
+**Already decided**
+
+Some questions are settled and reopening them needs new evidence rather than a new preference: Ed25519 with JCS canonicalization as the baseline cryptosuite, no blockchain dependency, a federated model without a single root, and verifier-side trust anchor selection. Each is documented with its rationale in the specification changelog.
+
+## Co-Authorship and Attribution
+
+Contributions that add or materially reshape a specification section are credited in the section itself and in the changelog entry, under the contributor's own name and affiliation if they want one shown.
+
+If you bring domain knowledge but do not want to write specification prose, that works too. Describe the practice and its constraints in an issue; we draft, you review until it matches reality, and you are credited as co-author of the result. The knowledge is the contribution, not the markdown.
 
 ## How to Contribute
 
@@ -50,8 +79,10 @@ Successful challenges that lead to specification improvements will be acknowledg
 ### W3C Credentials Community Group
 
 Discussion of the `did:trail` method in the context of W3C standards is welcome at:
-- Mailing list: public-credentials@w3.org
-- Archive: https://lists.w3.org/Archives/Public/public-credentials/
+- Credentials Community Group: public-credentials@w3.org · [archive](https://lists.w3.org/Archives/Public/public-credentials/)
+- Agent Identity Community Group: public-agent-identity@w3.org · [archive](https://lists.w3.org/Archives/Public/public-agent-identity/)
+
+The Agent Identity group is where questions specific to agent identity, resolution dependency and trust profiles are currently being worked out, including by projects other than this one.
 
 ### Pull Requests
 

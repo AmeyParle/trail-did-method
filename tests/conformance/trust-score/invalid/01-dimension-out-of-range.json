@@ -1,0 +1,19 @@
+{
+  "scope": "trust-score",
+  "section": "§7.3.2 dimension score range",
+  "expected": "invalid",
+  "description": "Dimension scores are defined on 0-100. A value of 150 for identityVerification is out of range and MUST be rejected before aggregation, rather than silently inflating the weighted sum.",
+  "input": {
+    "trailTrustTier": 1,
+    "dimensions": {
+      "identityVerification": 150,
+      "trackRecord": 90,
+      "informationProvenance": 80,
+      "behavioralConsistency": 82,
+      "thirdPartyAttestations": 70
+    },
+    "ageDays": 365,
+    "verifiedInteractions": 500,
+    "anomalyContributions": []
+  }
+}
